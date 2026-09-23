@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voiceops"
+version = "0.1.0"
+description = "VoiceOps Enterprise: Zero-cost voice AI benchmarking and deterministic guardrails platform"
+readme = "VOICEOPS_PRD.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "VoiceOps Team" }
+]
+keywords = [
+    "voice-ai",
+    "benchmarking",
+    "ttfa",
+    "pipecat",
+    "guardrails",
+    "hexagonal-architecture"
+]
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.2.0",
+    "pipecat-ai>=0.0.40",
+    "groq>=0.9.0",
+    "edge-tts>=6.1.12",
+    "google-generativeai>=0.8.0",
+    "supabase>=2.4.0",
+    "sqlalchemy>=2.0.0",
+    "redis>=5.0.0",
+    "upstash-redis>=1.0.0",
+    "streamlit>=1.35.0",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.1",
+    "websockets>=12.0",
+    "loguru>=0.7.2",
+    "numpy>=1.26.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["backend*", "frontend*"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --import-mode=importlib"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B"]
+ignore = ["B008"]
