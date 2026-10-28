@@ -10,11 +10,10 @@ from backend.infrastructure.queue.upstash_client import UpstashQueuePublisher
 from backend.pipelines.factory import PipelineDAGContext, PipelineFactory
 from backend.pipelines.modes.cascade_topology import build_cascade_pipeline
 from backend.pipelines.modes.hybrid_topology import build_hybrid_pipeline
-from backend.pipelines.modes.native_topology import build_native_pipeline
 
 
 class TestTopologies(unittest.TestCase):
-    """Test suite ensuring all three DAG topologies instantiate and link cleanly."""
+    """Test suite ensuring both DAG topologies instantiate and link cleanly."""
 
     def setUp(self):
         self.queue = UpstashQueuePublisher()
@@ -34,15 +33,6 @@ class TestTopologies(unittest.TestCase):
         self.assertIsInstance(pipeline, Pipeline)
         self.assertEqual(telemetry.trace_id, "test-cascade")
 
-    def test_build_native_topology(self):
-        """Verify Native S2S DAG creation."""
-        pipeline, telemetry = build_native_pipeline(
-            trace_id="test-native",
-            queue_publisher=self.queue,
-        )
-        self.assertIsInstance(pipeline, Pipeline)
-        self.assertEqual(telemetry.trace_id, "test-native")
-
     def test_build_hybrid_topology(self):
         """Verify Hybrid S2S with sidecar DAG creation."""
         pipeline, telemetry, interceptor = build_hybrid_pipeline(
@@ -54,14 +44,11 @@ class TestTopologies(unittest.TestCase):
         self.assertIsNotNone(interceptor)
 
     def test_factory_resolution(self):
-        """Verify PipelineFactory resolves all three modes."""
+        """Verify PipelineFactory resolves both modes."""
         ctx_cascade = self.factory.create_pipeline(PipelineMode.CASCADE, "f-trace-1")
         self.assertEqual(ctx_cascade.mode, PipelineMode.CASCADE)
         self.assertIsNone(ctx_cascade.interceptor)
 
-        ctx_native = self.factory.create_pipeline(PipelineMode.NATIVE, "f-trace-2")
-        self.assertEqual(ctx_native.mode, PipelineMode.NATIVE)
-        self.assertIsNone(ctx_native.interceptor)
 
         ctx_hybrid = self.factory.create_pipeline(PipelineMode.HYBRID, "f-trace-3")
         self.assertEqual(ctx_hybrid.mode, PipelineMode.HYBRID)

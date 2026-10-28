@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: voiceops
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /_stcore/health
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_LLM_MODEL
+        value: openai/gpt-oss-20b
+      - key: GROQ_WHISPER_MODEL
+        value: whisper-large-v3-turbo
+      - key: STREAMLIT_BROWSER_GATHER_USAGE_STATS
+        value: "false"

@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
     yield
 
     logger.info("Shutting down VoiceOps Enterprise Application...")
+    await container.benchmark_runner.stop()
     await container.flush_worker.stop()
     logger.info("TelemetryFlushWorker stopped cleanly.")
 

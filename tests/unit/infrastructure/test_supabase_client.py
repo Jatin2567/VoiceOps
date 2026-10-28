@@ -44,7 +44,7 @@ class TestSupabaseTelemetryRepository(unittest.IsolatedAsyncioTestCase):
         """Verify TTFA metric and batch persistence."""
         m1 = TTFAMetric(
             trace_id="trace-m1",
-            mode=PipelineMode.NATIVE,
+            mode=PipelineMode.CASCADE,
             t0_timestamp_ms=1000.0,
             t1_timestamp_ms=1350.0,
         )

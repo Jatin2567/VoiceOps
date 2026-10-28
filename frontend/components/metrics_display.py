@@ -12,14 +12,13 @@ def render_metrics_display(backend_url: str, trace_id: Optional[str]) -> Optiona
     then renders high-impact KPI cards and conversational balloons.
     """
     if not trace_id:
-        st.info("👈 Select a mode and click 'Execute Benchmark Turn' above to capture TTFA metrics.")
+        st.markdown('<div class="empty-state"><strong>Your first insight starts here.</strong><p>Choose a pipeline and run a benchmark. Your latency, transcript, and policy results will appear here.</p></div>', unsafe_allow_html=True)
         return None
 
     status_placeholder = st.empty()
-    metrics_placeholder = st.empty()
 
     result_data: Optional[Dict[str, Any]] = None
-    max_retries = 30
+    max_retries = 90
     delay_s = 0.5
 
     # Real-time polling loop
@@ -56,7 +55,8 @@ def render_metrics_display(backend_url: str, trace_id: Optional[str]) -> Optiona
     if exec_status == "COMPLETED":
         st.success(f"✅ Turn Benchmark Succeeded | Trace: `{trace_id}`")
     else:
-        st.error(f"❌ Turn Benchmark Failed: {result_data.get('error_message')}")
+        st.error(f"Benchmark could not complete: {result_data.get('error_message')}")
+        return result_data
 
     # Prominent TTFA KPI Metrics Cards
     ttfa = result_data.get("ttfa_ms")
@@ -89,9 +89,9 @@ def render_metrics_display(backend_url: str, trace_id: Optional[str]) -> Optiona
 
     with m2:
         st.metric(
-            label="Pipeline Topology Mode",
+            label="Voice pipeline",
             value=mode,
-            delta="Hexagonal DAG",
+            delta="Selected architecture",
         )
 
     with m3:
@@ -103,13 +103,13 @@ def render_metrics_display(backend_url: str, trace_id: Optional[str]) -> Optiona
 
     with m4:
         st.metric(
-            label="Sidecar Interceptions",
+            label="Policy checks",
             value=str(interceptions),
             delta=f"{len(violations)} Violations" if violations else "Policy Compliant",
         )
 
     # Transcript & Agent Response balloons
-    st.markdown("#### 💬 Conversational Turn Transcript")
+    st.markdown("#### Inside the conversation")
     chat_col1, chat_col2 = st.columns(2)
 
     with chat_col1:

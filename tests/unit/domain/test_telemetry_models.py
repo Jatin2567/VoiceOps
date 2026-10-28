@@ -32,7 +32,7 @@ class TestTelemetryModels(unittest.TestCase):
         t1 = 900.0
         metric = TTFAMetric(
             trace_id="ttfa-trace-2",
-            mode=PipelineMode.NATIVE,
+            mode=PipelineMode.CASCADE,
             t0_timestamp_ms=t0,
             t1_timestamp_ms=t1,
         )

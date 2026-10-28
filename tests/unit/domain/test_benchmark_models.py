@@ -19,7 +19,7 @@ class TestBenchmarkModels(unittest.TestCase):
     def test_pipeline_modes(self):
         """Verify all three topological modes are supported."""
         self.assertEqual(PipelineMode.CASCADE.value, "cascade")
-        self.assertEqual(PipelineMode.NATIVE.value, "native")
+        self.assertEqual(PipelineMode.CASCADE.value, "cascade")
         self.assertEqual(PipelineMode.HYBRID.value, "hybrid")
 
     def test_benchmark_request_defaults(self):

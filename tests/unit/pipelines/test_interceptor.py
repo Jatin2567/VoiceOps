@@ -26,6 +26,16 @@ class TestDeterministicSidecarInterceptor(unittest.IsolatedAsyncioTestCase):
             guardrail_service=self.guardrail_service,
         )
 
+    async def test_tool_results_are_not_executed_a_second_time(self):
+        frame = FunctionCallResultFrame(
+            function_name="cancel_appointment", tool_call_id="already-handled",
+            arguments={"booking_id": "book-001"}, result={"status": "success"},
+        )
+        await self.interceptor.process_frame(frame, FrameDirection.DOWNSTREAM)
+        self.assertEqual(self.interceptor.interception_count, 0)
+        self.assertNotEqual((await self.repo.get_booking("book-001")).status,
+                            BookingStatus.CANCELLED)
+
     async def test_intercept_cancellation_allowed(self):
         """Verify valid cancellation tool call is intercepted and allowed."""
         call_frame = FunctionCallInProgressFrame(

@@ -3,10 +3,12 @@ import asyncio
 import unittest
 
 from pipecat.frames.frames import (
-    AudioRawFrame,
+    InputAudioRawFrame,
     InterruptionFrame,
     TranscriptionFrame,
     TTSAudioRawFrame,
+    AggregatedTextFrame,
+    TTSTextFrame,
     UserStartedSpeakingFrame,
     UserStoppedSpeakingFrame,
 )
@@ -19,6 +21,14 @@ from backend.pipelines.processors.telemetry_processor import TelemetryProcessor
 
 class TestTelemetryProcessor(unittest.IsolatedAsyncioTestCase):
     """Test suite ensuring non-invasive TTFA capture and outbox queue push."""
+
+    async def test_response_counts_spoken_text_once(self):
+        for frame in [AggregatedTextFrame("Request checked.", "sentence"),
+                      TTSTextFrame("Request checked.", "sentence"),
+                      TTSTextFrame("Please try another slot.", "sentence")]:
+            await self.processor.process_frame(frame, FrameDirection.DOWNSTREAM)
+        self.assertEqual(self.processor.response_text,
+                         "Request checked. Please try another slot.")
 
     async def asyncSetUp(self):
         self.queue = UpstashQueuePublisher(url=None, token=None)
@@ -69,6 +79,14 @@ class TestTelemetryProcessor(unittest.IsolatedAsyncioTestCase):
             FrameDirection.DOWNSTREAM,
         )
         self.assertEqual(self.processor.transcription, "Schedule appointment")
+
+    async def test_input_audio_is_not_measured_as_agent_output(self):
+        self.processor.set_t0_timestamp(1.0)
+        await self.processor.process_frame(
+            InputAudioRawFrame(audio=b"\x00" * 320, sample_rate=16000, num_channels=1),
+            FrameDirection.DOWNSTREAM,
+        )
+        self.assertIsNone(self.processor.computed_ttfa_ms)
 
     async def test_reset_on_interruption(self):
         """Verify reset on interruption frame."""

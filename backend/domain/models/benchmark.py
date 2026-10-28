@@ -9,9 +9,8 @@ from pydantic import BaseModel, Field
 
 class PipelineMode(str, Enum):
     """Architectural topology mode for the voice pipeline."""
-    CASCADE = "cascade"   # STT (Groq Whisper) -> LLM (Groq Llama-3) -> TTS (Edge-TTS)
-    NATIVE = "native"     # Speech-to-Speech (Gemini Multimodal Live API)
-    HYBRID = "hybrid"     # Speech-to-Speech (Gemini Live) with deterministic sidecar interceptor
+    CASCADE = "cascade"   # STT (Groq Whisper) -> LLM (Groq LLM) -> TTS (Edge-TTS)
+    HYBRID = "hybrid"     # Groq + Edge-TTS with deterministic tool guardrails
 
 
 class BenchmarkStatus(str, Enum):

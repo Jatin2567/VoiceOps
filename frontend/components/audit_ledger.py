@@ -10,7 +10,7 @@ def render_audit_ledger(backend_url: str, active_result: Optional[Dict[str, Any]
     """
     Renders policy audit ledger and recent trace history.
     """
-    st.markdown("### 🛡️ Guardrail Audit Ledger & Observability History")
+    st.markdown("### Conversation history")
 
     # If active result has violations or sidecar activity, show detailed card
     if active_result and active_result.get("interception_count", 0) > 0:
@@ -37,7 +37,7 @@ def render_audit_ledger(backend_url: str, active_result: Optional[Dict[str, Any]
                 st.success("All intercepted function calls complied with clinic rules and schema contracts.")
 
     # Recent Benchmark History Table
-    st.markdown("#### 📜 Recent Observability Run History")
+    st.markdown("Recent benchmarks")
     recent_runs: List[Dict[str, Any]] = []
 
     try:
@@ -49,13 +49,13 @@ def render_audit_ledger(backend_url: str, active_result: Optional[Dict[str, Any]
         st.warning(f"Could not load recent history from backend: {e}")
 
     if not recent_runs:
-        st.caption("No historical benchmarks recorded yet in Supabase/Outbox store.")
+        st.caption("No runs yet. Completed benchmarks will appear here once your backend is connected.")
         return
 
     table_data = []
     for r in recent_runs:
         violations = r.get("guardrail_violations") or []
-        outcome = "FAIL (Blocked)" if violations else "PASS (Compliant)"
+        outcome = "Blocked" if violations else ("Passed" if r.get("status") == "completed" else "Not evaluated")
         ttfa = r.get("ttfa_ms")
         ttfa_str = f"{ttfa:.1f} ms" if ttfa is not None else "N/A"
 

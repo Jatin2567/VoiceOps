@@ -135,27 +135,11 @@ class EdgeTTSService(TTSService):
             await feeder_task
             await proc.wait()
 
-            if not has_yielded_audio:
-                # If edge-tts network failed, emit fallback silence so pipeline doesn't hang
-                logger.warning("No audio bytes yielded from edge-tts; generating fallback silence.")
-                silence = b"\x00" * self.PCM_CHUNK_SIZE
-                yield TTSAudioRawFrame(
-                    audio=silence,
-                    sample_rate=self._sample_rate,
-                    num_channels=1,
-                    context_id=context_id,
-                )
+            if not has_yielded_audio or proc.returncode:
+                raise RuntimeError("Speech synthesis returned no usable audio.")
 
         except Exception as e:
-            logger.error(f"EdgeTTSService run_tts error: {e}")
             yield ErrorFrame(error=f"Edge-TTS synthesis error: {e}")
-            # Emit minimal silence chunk to satisfy downstream audio consumers
-            yield TTSAudioRawFrame(
-                audio=b"\x00" * self.PCM_CHUNK_SIZE,
-                sample_rate=self._sample_rate,
-                num_channels=1,
-                context_id=context_id,
-            )
         finally:
             if feeder_task and not feeder_task.done():
                 feeder_task.cancel()

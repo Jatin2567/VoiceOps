@@ -9,10 +9,12 @@ from pipecat.frames.frames import (
     Frame,
     InterruptionFrame,
     LLMTextFrame,
+    LLMFullResponseEndFrame,
     OutputAudioRawFrame,
     TextFrame,
     TranscriptionFrame,
     TTSAudioRawFrame,
+    TTSTextFrame,
     UserStartedSpeakingFrame,
     UserStoppedSpeakingFrame,
     VADUserStartedSpeakingFrame,
@@ -55,6 +57,7 @@ class TelemetryProcessor(FrameProcessor):
         self._transcription: Optional[str] = None
         self._response_chunks: List[str] = []
         self._lock = asyncio.Lock()
+        self.response_finished = asyncio.Event()
 
     @property
     def trace_id(self) -> str:
@@ -70,7 +73,7 @@ class TelemetryProcessor(FrameProcessor):
 
     @property
     def response_text(self) -> str:
-        return "".join(self._response_chunks).strip()
+        return " ".join(chunk.strip() for chunk in self._response_chunks).strip()
 
     def set_t0_timestamp(self, t0_ms: float) -> None:
         """Explicitly set T0 marker (useful in discrete file tests)."""
@@ -105,12 +108,12 @@ class TelemetryProcessor(FrameProcessor):
             asyncio.create_task(self._queue.push_event(event))
 
         # 3. Capture LLM response tokens
-        elif isinstance(frame, (LLMTextFrame, TextFrame)) and not isinstance(frame, TranscriptionFrame):
+        elif isinstance(frame, TTSTextFrame):
             if hasattr(frame, "text") and frame.text:
                 self._response_chunks.append(frame.text)
 
         # 4. Capture T1 & TTFA: First synthesized or output audio frame
-        elif isinstance(frame, (TTSAudioRawFrame, AudioRawFrame, OutputAudioRawFrame)):
+        elif isinstance(frame, (TTSAudioRawFrame, OutputAudioRawFrame)):
             if self._t0_ms is not None and not self._ttfa_recorded:
                 self._t1_ms = now_ms
                 self._ttfa_recorded = True
@@ -127,6 +130,10 @@ class TelemetryProcessor(FrameProcessor):
                 )
                 # Non-invasive outbox push via background task
                 asyncio.create_task(self._queue.push_metric(metric))
+
+        elif isinstance(frame, LLMFullResponseEndFrame):
+            if self._computed_ttfa_ms is not None:
+                self.response_finished.set()
 
         # 5. Handle interruption or new turn start: reset turn markers
         elif isinstance(frame, (UserStartedSpeakingFrame, VADUserStartedSpeakingFrame, InterruptionFrame)):

@@ -17,7 +17,7 @@ class TriggerBenchmarkPayload(BaseModel):
     """Payload for initiating a voice turn benchmark."""
     mode: PipelineMode = Field(
         default=PipelineMode.CASCADE,
-        description="Architecture topology (cascade, native, hybrid)"
+        description="Architecture topology (cascade, hybrid)"
     )
     audio_file_path: Optional[str] = Field(
         default=None,
@@ -47,24 +47,15 @@ async def list_modes() -> List[Dict[str, Any]]:
     return [
         {
             "id": PipelineMode.CASCADE.value,
-            "name": "Cascade (Groq Whisper + Llama 3.3 + Edge-TTS)",
+            "name": "Cascade (Groq Whisper + Groq LLM + Edge-TTS)",
             "description": "Discrete STT -> LLM -> TTS pipeline with high inspectability.",
-            "expected_ttfa_range": "400ms - 800ms",
             "features": ["Subprocess TTS pipe", "Independent stage metrics"],
         },
         {
-            "id": PipelineMode.NATIVE.value,
-            "name": "Native Speech-to-Speech (Gemini Multimodal Live)",
-            "description": "Direct S2S via Gemini Live WebSocket without intermediate text conversion.",
-            "expected_ttfa_range": "300ms - 550ms",
-            "features": ["Zero transcription overhead", "Low end-to-end latency"],
-        },
-        {
             "id": PipelineMode.HYBRID.value,
-            "name": "Hybrid (Gemini Live + Deterministic Sidecar Guardrail)",
-            "description": "Native S2S with tool interception evaluating clinic policy before audio resumes.",
-            "expected_ttfa_range": "350ms - 650ms",
-            "features": ["Deterministic policy enforcement", "Sidecar tool interception", "Zero LLM hallucinations"],
+            "name": "Hybrid (Groq + Edge-TTS + Guardrails)",
+            "description": "Groq tool calls checked against clinic policy before Edge-TTS speaks the result.",
+            "features": ["Deterministic policy enforcement", "Sidecar tool interception"],
         },
     ]
 

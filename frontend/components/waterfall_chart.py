@@ -9,7 +9,7 @@ def render_waterfall_chart(result_data: Optional[Dict[str, Any]]) -> None:
     """
     Renders an interactive latency breakdown chart (STT, LLM TTFT, TTS TTFB, Guardrail overhead).
     """
-    st.markdown("### ⏱️ Latency Distribution & Pipeline Breakdown")
+    st.markdown("### Where the time goes")
 
     if not result_data:
         st.caption("No benchmark metrics available to display.")
@@ -23,28 +23,19 @@ def render_waterfall_chart(result_data: Optional[Dict[str, Any]]) -> None:
     values = []
     colors = []
 
-    if mode == "cascade":
-        stt = breakdown.get("stt_latency_ms") or 120.0
-        llm = breakdown.get("llm_ttft_ms") or 180.0
-        tts = breakdown.get("tts_ttfb_ms") or 140.0
-
-        stages = ["Whisper STT", "Llama-3 TTFT", "Edge-TTS TTFB", "First Audio (TTFA)"]
-        values = [stt, llm, tts, ttfa]
-        colors = ["#38bdf8", "#818cf8", "#c084fc", "#4ade80"]
-
-    elif mode == "hybrid":
-        guardrail = breakdown.get("guardrail_overhead_ms") or 35.0
-        gemini_s2s = max(0.0, ttfa - guardrail)
-
-        stages = ["Gemini Live S2S Base", "Sidecar Guardrail Overhead", "Total TTFA"]
-        values = [gemini_s2s, guardrail, ttfa]
-        colors = ["#38bdf8", "#f43f5e", "#4ade80"]
-
-    else:  # native
-        stages = ["Speech Reception & VAD", "Gemini Multimodal Live S2S (TTFA)"]
-        vad_est = min(50.0, ttfa * 0.1)
-        values = [vad_est, ttfa]
-        colors = ["#38bdf8", "#4ade80"]
+    for key, label, color in [
+        ("stt_latency_ms", "Whisper STT", "#4285f4"),
+        ("llm_ttft_ms", "Groq first token", "#fbbc04"),
+        ("tts_ttfb_ms", "Edge-TTS first audio", "#ea4335"),
+        ("guardrail_overhead_ms", "Guardrail checks", "#f43f5e"),
+    ]:
+        if breakdown.get(key) is not None:
+            stages.append(label)
+            values.append(breakdown[key])
+            colors.append(color)
+    stages.append("First audio (TTFA)")
+    values.append(ttfa)
+    colors.append("#34a853")
 
     # Plotly Horizontal Bar Chart
     fig = go.Figure(
@@ -63,21 +54,22 @@ def render_waterfall_chart(result_data: Optional[Dict[str, Any]]) -> None:
     )
 
     fig.update_layout(
-        template="plotly_dark",
+        template="plotly_white",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(15,23,42,0.6)",
-        font=dict(family="sans-serif", size=13, color="#e2e8f0"),
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(family="sans-serif", size=13, color="#3c4043"),
         height=320,
         margin=dict(l=20, r=20, t=20, b=20),
         xaxis=dict(
             title="Latency in Milliseconds (ms)",
-            gridcolor="#334155",
-            zerolinecolor="#475569",
+            gridcolor="#e8eaed",
+            zerolinecolor="#dadce0",
         ),
         yaxis=dict(
             autorange="reversed",
-            gridcolor="#334155",
+            gridcolor="#e8eaed",
         ),
     )
 
+    st.caption("Reported timing values only. Unavailable stages are omitted; stages may overlap.")
     st.plotly_chart(fig, use_container_width=True)

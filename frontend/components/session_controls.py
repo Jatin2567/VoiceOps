@@ -12,32 +12,30 @@ def render_session_controls(backend_url: str) -> Optional[str]:
     Renders mode selection, scenario options, and trigger button.
     Makes actual HTTP request to FastAPI backend and stores active trace_id in session state.
     """
-    st.markdown("### 🎙️ Benchmark Session Controls")
+    st.markdown("### Make your next conversation count.")
 
     col1, col2 = st.columns([1, 1])
 
     with col1:
         mode_label = st.radio(
-            "Select Voice AI Architecture Mode:",
+            "01 / Choose your voice pipeline",
             options=[
-                "Cascade (Groq Whisper + Llama 3.3 + Edge-TTS)",
-                "Native (Gemini Multimodal Live S2S)",
-                "Hybrid (Gemini Live + Deterministic Sidecar)",
+                "Cascade (Groq Whisper + Groq LLM + Edge-TTS)",
+                "Hybrid (Groq + Edge-TTS + Guardrails)",
             ],
             index=0,
-            help="Choose the topological paradigm to benchmark."
+            help="Compare Groq and Edge-TTS with or without clinic policy checks."
         )
 
         mode_mapping = {
-            "Cascade (Groq Whisper + Llama 3.3 + Edge-TTS)": "cascade",
-            "Native (Gemini Multimodal Live S2S)": "native",
-            "Hybrid (Gemini Live + Deterministic Sidecar)": "hybrid",
+            "Cascade (Groq Whisper + Groq LLM + Edge-TTS)": "cascade",
+            "Hybrid (Groq + Edge-TTS + Guardrails)": "hybrid",
         }
         selected_mode = mode_mapping[mode_label]
 
     with col2:
         scenario = st.selectbox(
-            "Select Test Scenario Utterance:",
+            "02 / Pick a conversation",
             options=[
                 "Standard Booking Request ('Book consultation for tomorrow at 10 AM')",
                 "Double-Booking Conflict Attack ('Book consultation for occupied slot 2026-09-25 10:00')",
@@ -57,18 +55,19 @@ def render_session_controls(backend_url: str) -> Optional[str]:
                 temp_file.close()
                 custom_audio_path = temp_file.name
 
-    st.markdown("---")
+    st.caption("Each run captures response timing and policy decisions for the selected pipeline.")
     trigger_col, status_col = st.columns([1, 2])
 
     with trigger_col:
         trigger_clicked = st.button(
-            "🚀 Execute Benchmark Turn",
+            "Run benchmark →",
             type="primary",
             use_container_width=True,
+            disabled="Custom .WAV" in scenario and uploaded_file is None,
         )
 
     if trigger_clicked:
-        with st.spinner("Connecting to FastAPI backend and spawning non-blocking Pipecat pipeline..."):
+        with st.spinner("Starting your voice benchmark…"):
             try:
                 payload = {
                     "mode": selected_mode,

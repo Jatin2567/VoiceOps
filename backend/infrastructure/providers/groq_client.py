@@ -1,4 +1,4 @@
-"""Groq API client adapter for Whisper STT and Llama-3 inference."""
+"""Groq API client adapter for Whisper STT and Groq LLM inference."""
 import io
 import os
 import time
@@ -10,11 +10,11 @@ from loguru import logger
 class GroqClient:
     """
     Client adapter wrapping the Groq Cloud API.
-    Provides ultra-low-latency Whisper STT and Llama-3 reasoning for the Cascade topology.
+    Provides ultra-low-latency Whisper STT and Groq LLM reasoning for the Cascade topology.
     """
 
     DEFAULT_WHISPER_MODEL = "whisper-large-v3-turbo"
-    DEFAULT_LLM_MODEL = "llama-3.3-70b-versatile"
+    DEFAULT_LLM_MODEL = "openai/gpt-oss-20b"
 
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or os.getenv("GROQ_API_KEY")
@@ -83,7 +83,7 @@ class GroqClient:
         max_tokens: int = 512
     ) -> Dict[str, Any]:
         """
-        Execute non-streaming chat completion with Llama-3.
+        Execute non-streaming chat completion with Groq LLM.
         """
         start_t = time.perf_counter()
         target_model = model or os.getenv("GROQ_LLM_MODEL", self.DEFAULT_LLM_MODEL)
@@ -140,7 +140,7 @@ class GroqClient:
         temperature: float = 0.2,
     ) -> AsyncGenerator[str, None]:
         """
-        Stream tokens from Llama-3, recording Time-to-First-Token (TTFT).
+        Stream tokens from Groq LLM, recording Time-to-First-Token (TTFT).
         """
         target_model = model or os.getenv("GROQ_LLM_MODEL", self.DEFAULT_LLM_MODEL)
 

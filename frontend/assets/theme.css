@@ -1,0 +1,33 @@
+:root {color-scheme: light;}
+.stApp {background:#f7f8fa;color:#202124;font-family:Arial,sans-serif;}
+[data-testid="stHeader"] {background:rgba(247,248,250,.95);}
+[data-testid="stSidebar"] {background:#fff;border-right:1px solid #e6e8ec;}
+.block-container {max-width:1320px;padding-top:2.5rem;padding-bottom:3rem;}
+h1,h2,h3 {color:#202124;letter-spacing:-.045em;}
+p,label,[data-testid="stCaptionContainer"] {color:#5f6368;}
+.brand {font-size:30px;font-weight:750;letter-spacing:-1.5px;margin:12px 0 20px;}
+.brand span:first-child {color:#4285f4;margin-right:8px;}
+.brand-dot {color:#ea4335;}
+.eyebrow,.hero-label {font-size:11px;font-weight:700;letter-spacing:2px;color:#69717b;}
+.hero {position:relative;background:#eef3fc;border-radius:24px;padding:38px 42px;margin:22px 0 28px;overflow:hidden;}
+.hero-label {color:#1967d2;}
+.hero h1 {font-size:clamp(36px,4.3vw,62px);line-height:1.08;font-weight:600;margin:16px 0;}
+.hero h1 span {color:#1967d2;}
+.hero p {max-width:570px;font-size:16px;line-height:1.7;}
+.color-track {display:flex;width:110px;height:5px;gap:5px;margin-top:24px;}
+.color-track i {width:25%;border-radius:4px;background:#4285f4;}
+.color-track i:nth-child(2) {background:#ea4335;}
+.color-track i:nth-child(3) {background:#fbbc04;}
+.color-track i:nth-child(4) {background:#34a853;}
+[data-testid="stVerticalBlockBorderWrapper"]>div {border-color:#e1e5eb!important;border-radius:20px!important;background:#fff;}
+[data-testid="stMetric"] {background:#fff;border:1px solid #e1e5eb;border-radius:18px;padding:20px;min-height:132px;}
+[data-testid="stMetricValue"] {font-size:28px;color:#202124;}
+.stButton>button {border-radius:999px;min-height:46px;font-weight:600;}
+.stButton>button[kind="primary"] {background:#1967d2;border-color:#1967d2;color:white;}
+.stButton>button:hover {border-color:#1967d2;}
+[data-testid="stChatMessage"] {background:#eef3fc;border-radius:18px;}
+.empty-state {text-align:center;padding:35px 20px;background:#fff;border:1px dashed #c9d5e7;border-radius:20px;margin:12px 0 24px;}
+.empty-state strong {display:block;color:#202124;font-size:19px;margin-bottom:8px;}
+.empty-state p {margin:0;font-size:14px;}
+@media(max-width:640px){.hero {padding:25px;} .block-container{padding:1.5rem 1rem;}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}

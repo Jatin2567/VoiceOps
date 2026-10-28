@@ -26,10 +26,10 @@ class TestFastAPIRoutes(unittest.TestCase):
         resp = self.client.get("/v1/benchmark/modes")
         self.assertEqual(resp.status_code, 200)
         modes = resp.json()
-        self.assertEqual(len(modes), 3)
+        self.assertEqual(len(modes), 2)
         mode_ids = [m["id"] for m in modes]
         self.assertIn("cascade", mode_ids)
-        self.assertIn("native", mode_ids)
+        self.assertNotIn("native", mode_ids)
         self.assertIn("hybrid", mode_ids)
 
     def test_trigger_benchmark_instant_return(self):

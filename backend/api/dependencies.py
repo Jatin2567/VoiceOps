@@ -1,5 +1,8 @@
 """Dependency Injection wiring for Hexagonal Architecture ports and adapters."""
 from typing import Optional
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 from backend.application.services.benchmark_runner import BenchmarkRunnerService
 from backend.application.services.guardrail_service import GuardrailPolicyService
@@ -10,7 +13,6 @@ from backend.domain.ports.queue_publisher import IQueuePublisher
 from backend.domain.ports.telemetry_repository import ITelemetryRepository
 from backend.infrastructure.persistence.mock_booking_repo import MockBookingRepository
 from backend.infrastructure.persistence.supabase_client import SupabaseTelemetryRepository
-from backend.infrastructure.providers.gemini_live_client import GeminiLiveClient
 from backend.infrastructure.queue.upstash_client import UpstashQueuePublisher
 from backend.pipelines.factory import PipelineFactory
 
@@ -26,13 +28,11 @@ class ApplicationContainer:
 
         # Domain & Application Services
         self.guardrail_service: IGuardrailPolicyService = GuardrailPolicyService(self.booking_repo)
-        self.gemini_client = GeminiLiveClient()
 
         # Pipeline DAG Factory
         self.pipeline_factory = PipelineFactory(
             queue_publisher=self.queue_publisher,
             guardrail_service=self.guardrail_service,
-            gemini_client=self.gemini_client,
         )
 
         # Benchmark Orchestration Service
@@ -57,6 +57,7 @@ def get_container() -> ApplicationContainer:
     """Return the initialized global dependency container."""
     global _container
     if _container is None:
+        load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
         _container = ApplicationContainer()
     return _container
 
