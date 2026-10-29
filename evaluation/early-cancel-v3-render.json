@@ -1,0 +1,8 @@
+{
+  "scope": "Deployed cancellation sent before reading server acknowledgement",
+  "events": [
+    "turn_start",
+    "interrupted"
+  ],
+  "ack_ms": 270
+}
