@@ -38,3 +38,4 @@ a{color:var(--accent)} em{font-style:normal;color:var(--accent)}
 .st-key-workspace_nav{margin-bottom:14px!important}
 .st-key-voice_console{margin-top:0!important}
 .voice-art.is-active{height:120px}
+.empty-state{border:1px dashed #40372d;border-radius:16px;padding:32px;text-align:center;margin:20px 0}.empty-state strong{display:block;font-size:21px;color:#e2d9cc;margin-bottom:9px}.empty-state p{font-size:13px;color:#a59b8e}
