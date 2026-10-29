@@ -5,9 +5,7 @@ from pathlib import Path
 
 
 def render_reference():
-    st.markdown('<div class="eyebrow">OPERATING GUIDE</div>', unsafe_allow_html=True)
-    st.title("Understand every turn.")
-    st.write("A practical reference for the voice pipeline, policy checks, debugging, and evaluation.")
+    st.markdown('<section class="page-intro"><div class="eyebrow">THE FIELD GUIDE / 04</div><h1>Clarity, at<br><em>every step.</em></h1><p>The thinking behind the voice. Explore the pipeline, understand its boundaries, and see how we test it.</p></section>', unsafe_allow_html=True)
     tabs = st.tabs(["How it works", "Debugging", "Reliability", "Evaluation"])
     with tabs[0]:
         st.subheader("One voice stack. Two ways to explore.")

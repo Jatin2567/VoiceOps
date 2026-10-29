@@ -1,4 +1,4 @@
-"""Accessible browser microphone turns with spoken replies and visible policy outcomes."""
+"""Voice studio: recording, contextual replies, and transparent booking actions."""
 import base64
 import hashlib
 from datetime import datetime, timedelta, timezone
@@ -8,21 +8,29 @@ import streamlit as st
 
 
 def render_live_call(backend_url, online):
-    st.markdown('''<section class="call-hero"><div class="eyebrow">VOICE WORKSPACE / LIVE CALL</div>
-    <h1>A conversation.<br><span>With clear boundaries.</span></h1>
-    <p>Speak naturally. Check availability, book a visit, or cancel an appointment.
-    Every action passes through the same clinic policies.</p>
-    <div class="pill-row"><span>Groq intelligence</span><span>Edge-TTS voice</span><span>Hybrid guardrails</span></div></section>''', unsafe_allow_html=True)
-    st.caption("Demo clinic • isolated bookings • UTC appointment times • push-to-talk, not a phone call")
     sid = st.session_state.get("call_id")
-    left, right = st.columns([1.5, 1], gap="large")
+    left, right = st.columns([1.2, 1], gap="large")
     with left:
-        with st.container(border=True):
-            st.subheader("Your call room")
+        st.markdown('''<section class="studio-intro">
+        <div class="eyebrow"><span class="tiny-wave">▥</span> THE VOICE STUDIO / 01</div>
+        <h1>Good conversations.<br><em>Real actions.</em></h1>
+        <p class="intro-copy">A voice that listens. An assistant that follows through.<br>Book, check, and cancel—with policies built into every turn.</p>
+        <div class="studio-tags"><span>Groq × Edge-TTS</span><span>Hybrid guardrails</span></div>
+        </section>''', unsafe_allow_html=True)
+        example_date = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%B %d, %Y")
+        st.markdown('<div class="prompt-label">SOMETHING TO SAY</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="sample-prompt">“Book a consultation for Alex Test on {example_date} at 10 AM UTC. My number is 9876543210.”</div>', unsafe_allow_html=True)
+        st.caption('Then try “Cancel the appointment you just booked.” Use fictional details and UTC times.')
+    with right:
+        with st.container(border=True, key="voice_console"):
+            label = "SESSION OPEN" if sid else "READY WHEN YOU ARE"
+            st.markdown(f'<div class="console-top"><span>VOICEOPS ASSISTANT</span><span class="console-status">{label}</span></div>', unsafe_allow_html=True)
+            st.markdown(f'''<div class="voice-art {'is-active' if sid else ''}" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="voice-core"><div class="voice-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>''', unsafe_allow_html=True)
+            st.markdown('<div class="console-title">Your next conversation starts here.</div>', unsafe_allow_html=True)
             if not sid:
-                st.write("Start a call, allow microphone access, then record a short request. Stop recording and send your turn to hear the assistant.")
-                st.info("Audio is sent to Groq for transcription and reasoning. Reply text is sent to Microsoft Edge-TTS. Use fictional booking details.")
-                if st.button("Start voice call", type="primary", disabled=not online, width="stretch"):
+                st.caption("One turn at a time. Record, send, and hear the reply.")
+                st.caption("Audio → Groq · Reply text → Edge-TTS. Use fictional details.")
+                if st.button("Start a conversation ↗", type="primary", disabled=not online, width="stretch"):
                     try:
                         response = httpx.post(backend_url + "/v1/calls", timeout=10)
                         response.raise_for_status()
@@ -31,7 +39,7 @@ def render_live_call(backend_url, online):
                     except httpx.HTTPError:
                         st.error("Could not open a call. The server may be waking up; try again shortly.")
             else:
-                st.success("Call ready · Hybrid policies active")
+                st.caption("● Session ready · Hybrid checks active")
                 source = st.radio("Voice input", ["Microphone", "Test recording"], horizontal=True)
                 if source == "Microphone":
                     audio = st.audio_input("Record your request", sample_rate=16000,
@@ -73,7 +81,7 @@ def render_live_call(backend_url, online):
                             except httpx.HTTPError:
                                 st.error("Connection interrupted. Send the same recording again to retrieve its result without repeating the booking action.")
                                 progress.update(label="Connection interrupted", state="error")
-                if st.button("End call & clear session", width="stretch"):
+                if st.button("End conversation", width="stretch"):
                     try:
                         response = httpx.delete(f"{backend_url}/v1/calls/{sid}", timeout=10)
                         if response.status_code not in (200, 404):
@@ -85,6 +93,14 @@ def render_live_call(backend_url, online):
                             st.rerun()
                     except httpx.HTTPError:
                         st.error("Could not reach the server to end the call. Please try again.")
+
+    st.markdown('<div class="process-strip"><div><b>01</b><span>Speak naturally<small>Up to 30 seconds per turn</small></span></div><div><b>02</b><span>Policies come first<small>Every booking action is checked</small></span></div><div><b>03</b><span>Hear the outcome<small>Spoken replies, visible actions</small></span></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-heading"><span class="eyebrow">YOUR SESSION</span><h2>Every word. Every action.</h2></div>', unsafe_allow_html=True)
+    left, right = st.columns([1.5, 1], gap="large")
+    with left:
+        st.markdown('<div class="panel-label">CONVERSATION</div>', unsafe_allow_html=True)
+        if not st.session_state.get("call_turns"):
+            st.markdown('<div class="conversation-empty"><span>“</span><h3>A little quiet, for now.</h3><p>Your words and the assistant’s replies will appear here.<br>Start a conversation above to make the first move.</p></div>', unsafe_allow_html=True)
         for turn in st.session_state.get("call_turns", [])[-6:]:
             with st.chat_message("user"):
                 st.write(turn.get("transcription") or "Voice recording")
@@ -104,12 +120,6 @@ def render_live_call(backend_url, online):
                     st.json({k: turn.get(k) for k in ["trace_id", "status", "ttfa_ms", "breakdown", "interception_count", "guardrail_violations"]})
     with right:
         with st.container(border=True):
-            st.subheader("Try a conversation")
-            example_date = (datetime.now(timezone.utc) + timedelta(days=7)).strftime("%B %d, %Y")
-            st.write(f'“Book a consultation for Alex Test on {example_date} at 10 AM UTC. My number is 9876543210.”')
-            st.write('Then: “Cancel the appointment you just booked.”')
-            st.caption("Use a future date. The assistant remembers tool results within this call, including the booking ID.")
-        with st.container(border=True):
             st.subheader("Booking activity")
             bookings = st.session_state.get("call_bookings", [])
             if not bookings:
@@ -118,7 +128,7 @@ def render_live_call(backend_url, online):
                 st.markdown(f"**{booking['service_type'].replace('_', ' ').title()} · {booking['status'].title()}**")
                 st.write(booking["slot_time"])
                 st.caption(f"{booking['customer_name']} · ID {booking['id']}")
-        with st.container(border=True):
-            st.subheader("What keeps this reliable")
-            st.write("Policy checks happen before a booking action. Duplicate sends reuse the original result. Failed turns show an error instead of invented audio.")
-            st.caption("Calls expire after 30 idle minutes or a server restart. Up to 12 turns per call. Audio playback may require pressing Play in your browser.")
+
+        with st.expander("Session details & privacy"):
+            st.write("Push-to-talk demo, not a telephone call. Bookings exist only in your session and disappear on restart. Calls expire after 30 idle minutes, with up to 12 turns. Microphone access requires HTTPS and browser permission.")
+            st.caption("If autoplay is blocked, use the audio player. The Reference page explains recovery, policies, and evaluation.")

@@ -12,8 +12,8 @@ from frontend.components.metrics_display import render_metrics_display
 from frontend.components.session_controls import render_session_controls
 from frontend.components.waterfall_chart import render_waterfall_chart
 
-st.set_page_config(page_title="VoiceOps | Voice intelligence workspace", page_icon="◉",
-                   layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="VoiceOps — Conversations into actions", page_icon="◉",
+                   layout="wide", initial_sidebar_state="collapsed")
 st.markdown(f"<style>{Path(__file__).with_name('assets').joinpath('theme.css').read_text()}</style>",
             unsafe_allow_html=True)
 BACKEND_API_URL = os.getenv("BACKEND_API_URL", "http://localhost:8000")
@@ -24,37 +24,19 @@ try:
 except httpx.HTTPError:
     backend_online = False
 
-with st.sidebar:
-    st.markdown('<div class="brand"><span>◉</span> VoiceOps<span class="brand-dot">.</span></div>',
-                unsafe_allow_html=True)
-    st.caption("VOICE INTELLIGENCE WORKSPACE")
-    st.markdown("---")
+status = "SYSTEM ONLINE" if backend_online else "SYSTEM UNAVAILABLE"
+st.markdown(f'<header class="masthead"><div class="wordmark"><span>▥</span> voiceops<span class="wordmark-dot">●</span></div><div class="masthead-note">CONVERSATION, WITH CONSEQUENCE.</div><div class="system-state {"online" if backend_online else "offline"}"><i></i>{status}</div></header>', unsafe_allow_html=True)
+with st.container(key="workspace_nav"):
     page = st.radio("Workspace", ["Live call", "Benchmark lab", "Run history", "Reference"],
-                    label_visibility="collapsed")
-    st.markdown("---")
-    st.markdown("**Your environment**")
-    if backend_online:
-        st.success("Backend connected")
-    else:
-        st.warning("Backend disconnected")
-        st.caption("Start your backend to run benchmarks and load history.")
-    with st.expander("Connection details"):
-        st.code(BACKEND_API_URL, language=None)
-        st.code("uvicorn backend.main:app --port 8000", language="bash")
-    st.markdown("---")
-    st.markdown("**Small delays. Big differences.**")
-    st.caption("Measure every voice interaction. Understand every decision.")
-    st.caption("VoiceOps Enterprise · v0.1")
-
-st.markdown('<div class="eyebrow">WORKSPACE / ' + page.upper() + '</div>',
-            unsafe_allow_html=True)
+                    horizontal=True, label_visibility="collapsed", key="workspace_page")
+if not backend_online:
+    st.warning("The voice service is unavailable. Free hosting may need a moment to wake up; refresh shortly.")
 if page == "Live call":
     render_live_call(BACKEND_API_URL, backend_online)
 elif page == "Benchmark lab":
-    st.markdown('''<section class="hero"><div class="hero-label">BUILT FOR CONVERSATIONS</div>
-    <h1>Better voice AI.<br><span>Starts with listening.</span></h1>
-    <p>Your space to compare voice pipelines, explore response times, and put guardrails to the test.</p>
-    <div class="color-track"><i></i><i></i><i></i><i></i></div></section>''',
+    st.markdown('''<section class="page-intro"><div class="eyebrow">THE BENCHMARK LAB / 02</div>
+    <h1>Measure what<br><em>makes it work.</em></h1>
+    <p>Compare voice pipelines. Follow the latency. See exactly where policies intervene.</p></section>''',
                 unsafe_allow_html=True)
     with st.container(border=True):
         active_trace_id = render_session_controls(backend_url=BACKEND_API_URL)
@@ -67,8 +49,9 @@ elif page == "Benchmark lab":
     with st.container(border=True):
         render_audit_ledger(BACKEND_API_URL, result_data)
 elif page == "Run history":
-    st.title("Every run tells a story.")
+    st.markdown('<section class="page-intro"><div class="eyebrow">THE RUN ARCHIVE / 03</div><h1>Nothing lost<br><em>in translation.</em></h1></section>', unsafe_allow_html=True)
     st.caption("Review recent benchmarks and the policies that shaped each response.")
     render_audit_ledger(BACKEND_API_URL, None)
 else:
     render_reference()
+st.markdown('<footer class="site-footer"><span class="footer-brand">voiceops.</span><span>Built for listening. Designed for clarity.</span><span>DEMO WORKSPACE · 2026</span></footer>', unsafe_allow_html=True)
