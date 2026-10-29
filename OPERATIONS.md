@@ -1,8 +1,29 @@
 # VoiceOps operations & evaluation
 
+## Architecture comparison lab
+
+The public root serves the general-purpose architecture lab. Choose a task, use a sample,
+record once or upload a WAV, then compare buffered, streaming and guarded streaming paths.
+Reference material, an optional expected phrase, and sandbox action policies are configurable.
+Results include measured server event timelines and browser trial-ready-to-scheduled-playback
+latency. Initial WAV upload and physical speaker output are excluded. JSON/CSV exports retain
+input hashes, configuration, responses and failures. History is held only in the current tab.
+
+Use `python scripts/start_render.py` for the combined service. The public gateway and private API share provider imports in one process. The gateway runs on
+`PORT` (default 10000); Streamlit uses loopback 8501 with base path `/studio`; the earlier API
+uses loopback 8000. `/health` and `/_stcore/health` on the gateway support Render health checks.
+The gateway exposes the bounded experiment channel and existing studio; the legacy API is private.
+Two experiments can run concurrently, with at most nine sequential trials each.
+
+Run `python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws` for live
+server comparisons; add `--task action --audio frontend/lab/action.wav` to inspect policy
+blocking of an over-limit simulated refund. These reports do not measure browser playback.
+Use the browser for playback acceptance tests. A few trials do not establish architectural
+speedup percentages. See ARCHITECTURE_LAB.md for the complete measurement contract.
+
 ## Browser voice calls
 
-Open **Live call**, choose **Start call**, and allow microphone access once. Speak naturally;
+Open **Call studio → Live call**, choose **Start call**, and allow microphone access once. Speak naturally;
 a roughly 1.1-second pause submits the utterance automatically. The reply plays and listening
 resumes without pressing Record or Send. Mute and End remain available. Listening pauses
 while the assistant speaks to avoid echo; interruption/barge-in is not supported.
@@ -32,8 +53,8 @@ These are demo mutations, not appointments in an external clinic system.
   are created. Only the latest reply audio is cached; raw input files are deleted after each turn.
 - Calls are excluded from shared benchmark history. Provider logs may still contain
   conversational data; use fictional details. No production identity or authorization model is provided.
-- The combined Render launcher waits for API health, then exposes Streamlit. It exits
-  if either process fails. Free-instance sleep and restart discard all in-memory state.
+- The combined Render launcher waits for API health, then starts Streamlit and the public lab gateway.
+  It exits if any child process fails. Free-instance sleep and restart discard all in-memory state.
 
 ## Debugging
 

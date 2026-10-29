@@ -1,0 +1,273 @@
+{
+  "spec": {
+    "modes": [
+      "buffered",
+      "streaming",
+      "guarded"
+    ],
+    "repeats": 1,
+    "task": "action",
+    "instruction": "Reply in two short sentences.",
+    "action_limit": 100,
+    "allowed_actions": [
+      "refund",
+      "credit",
+      "reserve"
+    ]
+  },
+  "input": "frontend/lab/action.wav",
+  "measurement": "Server only; no browser playback or acoustic latency",
+  "runs": [
+    {
+      "type": "result",
+      "trial": 1,
+      "trace_id": "1075b209-76d1-4554-8295-6b29534aecce",
+      "mode": "buffered",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "Refund of 150 units simulated successfully. No real external effect occurred.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 403.75
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 1196.12
+        },
+        {
+          "name": "tool_result",
+          "ms": 1918.11,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.012
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1918.83
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 2424.51
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 2436.79
+        },
+        {
+          "name": "tts_request",
+          "ms": 2441.92
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 3986.52
+        },
+        {
+          "name": "tts_request",
+          "ms": 4172.7
+        },
+        {
+          "name": "response_complete",
+          "ms": 5919.32
+        }
+      ],
+      "metrics": {
+        "stt_ms": 792.37,
+        "llm_first_token_ms": 1228.39,
+        "tts_first_audio_ms": 1544.6,
+        "server_first_audio_ms": 3986.52,
+        "server_complete_ms": 5919.32,
+        "tool_overhead_ms": 0.012
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.012
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS"
+      }
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "trace_id": "887e2d61-60ba-4701-b854-fd7ab45d1c21",
+      "mode": "streaming",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "The refund has been simulated for 150 units. No actual transaction occurred.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 21.34
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 333.89
+        },
+        {
+          "name": "tool_result",
+          "ms": 1000.11,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.012
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1000.97
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1422.65
+        },
+        {
+          "name": "tts_request",
+          "ms": 1447.45
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1468.3
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2783.46
+        },
+        {
+          "name": "tts_request",
+          "ms": 2999.75
+        },
+        {
+          "name": "response_complete",
+          "ms": 4433.46
+        }
+      ],
+      "metrics": {
+        "stt_ms": 312.55,
+        "llm_first_token_ms": 1088.76,
+        "tts_first_audio_ms": 1336.01,
+        "server_first_audio_ms": 2783.46,
+        "server_complete_ms": 4433.46,
+        "tool_overhead_ms": 0.012
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.012
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS"
+      }
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "trace_id": "f5d1596d-f6de-45b8-a32f-beb2caab8c0d",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "The refund request was blocked. The amount exceeds the policy limit.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 16.23
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 296.51
+        },
+        {
+          "name": "tool_result",
+          "ms": 886.06,
+          "status": "blocked",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "reason": "Action must be allowed and its amount must be within the configured policy limit.",
+          "policy_enforced": true,
+          "overhead_ms": 0.009
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 886.56
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1541.29
+        },
+        {
+          "name": "tts_request",
+          "ms": 1556.23
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1579.88
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2542.41
+        },
+        {
+          "name": "tts_request",
+          "ms": 2750.52
+        },
+        {
+          "name": "response_complete",
+          "ms": 4254.88
+        }
+      ],
+      "metrics": {
+        "stt_ms": 280.28,
+        "llm_first_token_ms": 1244.78,
+        "tts_first_audio_ms": 986.18,
+        "server_first_audio_ms": 2542.41,
+        "server_complete_ms": 4254.88,
+        "tool_overhead_ms": 0.009
+      },
+      "tools": [
+        {
+          "status": "blocked",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "reason": "Action must be allowed and its amount must be within the configured policy limit.",
+          "policy_enforced": true,
+          "overhead_ms": 0.009
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS"
+      }
+    }
+  ]
+}

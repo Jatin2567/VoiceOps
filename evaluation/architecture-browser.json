@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-29T17:55:26.486Z",
+  "spec": {
+    "modes": [
+      "buffered",
+      "streaming",
+      "guarded"
+    ],
+    "repeats": 1,
+    "task": "conversation",
+    "instruction": "Answer clearly in two or three short sentences.",
+    "context": "",
+    "expected_phrase": "",
+    "allowed_actions": [
+      "refund",
+      "credit",
+      "reserve"
+    ],
+    "action_limit": 100
+  },
+  "runs": [
+    {
+      "type": "result",
+      "trial": 1,
+      "trace_id": "6bff7799-7eff-47a3-9a10-5c14b36934e5",
+      "mode": "buffered",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "Rainlight enters a water droplet and bends, spreading its colors. Inside the droplet the light reflects off the back surface and exits. The observer sees a circular spectrum, forming a rainbow.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 488.44
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 1370.51
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 2207.85
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 2272.55
+        },
+        {
+          "name": "tts_request",
+          "ms": 2297.1
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 3723.03
+        },
+        {
+          "name": "tts_request",
+          "ms": 3928.57
+        },
+        {
+          "name": "tts_request",
+          "ms": 5443.02
+        },
+        {
+          "name": "response_complete",
+          "ms": 7112.98
+        }
+      ],
+      "metrics": {
+        "stt_ms": 882.07,
+        "llm_first_token_ms": 837.34,
+        "tts_first_audio_ms": 1425.93,
+        "server_first_audio_ms": 3723.03,
+        "server_complete_ms": 7112.98,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "b1e7755da5ae3ff8f755adb0128a1bfb840720701fe0bd1dc3847bf26fd2e5e9",
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS"
+      },
+      "browser_first_playback_ms": 7245,
+      "playback_clock": "AudioContext scheduled start; device output latency excluded"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "trace_id": "707be022-9f2f-4d80-9e6e-e7e187e5fd21",
+      "mode": "streaming",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet, then reflects off the droplet’s back surface, and refracts again as it exits. This double refraction splits the light into its component colors, spreading them out in a circular arc. The observer sees the bright, colored ring whenever the Sun is behind them and the droplet is in front of them at the right angle.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 18.54
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 315.39
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 808.05
+        },
+        {
+          "name": "tts_request",
+          "ms": 871.4
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 957.72
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2951.74
+        },
+        {
+          "name": "tts_request",
+          "ms": 3222.6
+        },
+        {
+          "name": "tts_request",
+          "ms": 5799.7
+        },
+        {
+          "name": "response_complete",
+          "ms": 7571.65
+        }
+      ],
+      "metrics": {
+        "stt_ms": 296.85,
+        "llm_first_token_ms": 492.66,
+        "tts_first_audio_ms": 2080.34,
+        "server_first_audio_ms": 2951.74,
+        "server_complete_ms": 7571.65,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "b1e7755da5ae3ff8f755adb0128a1bfb840720701fe0bd1dc3847bf26fd2e5e9",
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS"
+      },
+      "browser_first_playback_ms": 3039,
+      "playback_clock": "AudioContext scheduled start; device output latency excluded"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "trace_id": "4b056bc3-5872-4807-8945-3e6960989b6f",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow appears when sunlight is refracted and dispersed by raindrops.  \nEach drop splits the light into a spectrum, reflecting the red light on the outside and blue light on the inside.  \nWhen many drops do this at once, the colors align into a circular arc.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 18.9
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 297.8
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1023.96
+        },
+        {
+          "name": "tts_request",
+          "ms": 1079.12
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1129.77
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 3273.08
+        },
+        {
+          "name": "tts_request",
+          "ms": 3488.89
+        },
+        {
+          "name": "tts_request",
+          "ms": 5069.94
+        },
+        {
+          "name": "response_complete",
+          "ms": 6558.91
+        }
+      ],
+      "metrics": {
+        "stt_ms": 278.9,
+        "llm_first_token_ms": 726.16,
+        "tts_first_audio_ms": 2193.96,
+        "server_first_audio_ms": 3273.08,
+        "server_complete_ms": 6558.91,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "b1e7755da5ae3ff8f755adb0128a1bfb840720701fe0bd1dc3847bf26fd2e5e9",
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS"
+      },
+      "browser_first_playback_ms": 3359,
+      "playback_clock": "AudioContext scheduled start; device output latency excluded"
+    }
+  ],
+  "measurement": "Browser run-ready submission to first scheduled PCM playback. Server stage timings use a separate monotonic clock.",
+  "limitations": [
+    "No acoustic output measurement",
+    "No continuous STT or interruption handling",
+    "Sequential rotated trials; uncontrolled network/provider warm-up",
+    "Phrase match is not semantic correctness"
+  ],
+  "completed_at": "2026-10-29T17:56:36.121Z"
+}

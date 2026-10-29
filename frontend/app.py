@@ -25,6 +25,7 @@ except httpx.HTTPError:
     backend_online = False
 
 status = "SYSTEM ONLINE" if backend_online else "SYSTEM UNAVAILABLE"
+st.markdown('[← Architecture comparison lab](/)', unsafe_allow_html=False)
 st.markdown(f'<header class="masthead"><div class="wordmark"><span>▥</span> voiceops<span class="wordmark-dot">●</span></div><div class="masthead-note">CONVERSATION, WITH CONSEQUENCE.</div><div class="system-state {"online" if backend_online else "offline"}"><i></i>{status}</div></header>', unsafe_allow_html=True)
 with st.container(key="workspace_nav"):
     page = st.radio("Workspace", ["Live call", "Benchmark lab", "Run history", "Reference"],

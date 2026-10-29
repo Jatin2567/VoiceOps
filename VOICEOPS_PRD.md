@@ -1,5 +1,8 @@
 # Product Requirements Document: VoiceOps Enterprise
 
+> Current architecture showcase: see [ARCHITECTURE_LAB.md](ARCHITECTURE_LAB.md) for the implemented
+> three-mode lab and measurement contract. The original design below is retained as project history.
+
 ## 1. System Overview
 VoiceOps is a modular Voice AI benchmarking and observability platform designed to quantify Time-to-First-Audio (TTFA) latency and validate deterministic policy guardrails across two architectural modes: Cascade and Hybrid.
 

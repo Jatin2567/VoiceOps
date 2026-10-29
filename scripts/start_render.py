@@ -24,8 +24,7 @@ def main():
     signal.signal(signal.SIGINT, stop)
     try:
         backend = subprocess.Popen([
-            sys.executable, "-m", "uvicorn", "backend.main:app",
-            "--host", "127.0.0.1", "--port", "8000",
+            sys.executable, "scripts/serve_apis.py",
         ], env=env)
         children.append(backend)
         deadline = time.monotonic() + 90
@@ -44,7 +43,7 @@ def main():
         children.append(subprocess.Popen([
             sys.executable, "-m", "streamlit", "run", "frontend/app.py",
             "--global.developmentMode=false",
-            "--server.address=0.0.0.0", "--server.port=" + env.get("PORT", "10000"),
+            "--server.address=127.0.0.1", "--server.port=8501", "--server.baseUrlPath=studio",
             "--server.headless=true", "--browser.gatherUsageStats=false",
         ], env=env))
         while not stopping and all(child.poll() is None for child in children):
