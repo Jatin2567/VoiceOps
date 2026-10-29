@@ -23,7 +23,7 @@ def wav():
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("mode", ["buffered", "streaming", "guarded"])
+@pytest.mark.parametrize("mode", ["buffered", "text_buffered", "audio_buffered", "streaming", "guarded"])
 async def test_real_pipeline_progressive_delivery_or_complete_buffer(mode, monkeypatch):
     monkeypatch.setenv("GROQ_API_KEY", "test")
     events, completed_at_audio = [], []
@@ -61,7 +61,10 @@ async def test_real_pipeline_progressive_delivery_or_complete_buffer(mode, monke
     assert result["metrics"]["stt_ms"] is not None
     assert result["metrics"]["server_complete_ms"] >= result["metrics"]["server_first_audio_ms"]
     assert completed_at_audio
-    assert all(completed_at_audio) if mode == "buffered" else not completed_at_audio[0]
+    assert all(completed_at_audio) if mode in ("buffered", "audio_buffered") else not completed_at_audio[0]
+    assert result["configuration"]["buffer_text"] == (mode in ("buffered", "text_buffered"))
+    assert result["configuration"]["buffer_audio"] == (mode in ("buffered", "audio_buffered"))
+    assert result["runtime"]["dependencies"]["pipecat-ai"]
 
 
 @pytest.mark.asyncio
@@ -89,6 +92,8 @@ def test_schedule_rotates_and_configuration_is_bounded():
     with pytest.raises(ValidationError):
         ExperimentSpec(modes=["streaming", "streaming"])
     with pytest.raises(ValidationError):
-        ExperimentSpec(repeats=4)
+        ExperimentSpec(repeats=31)
     with pytest.raises(ValidationError):
         ExperimentSpec(action_limit=float("nan"))
+    assert len(ExperimentSpec(repeats=30, warmup=True).schedule()) == 93
+    assert ExperimentSpec(order_offset=1).schedule()[0] == (1, "streaming")

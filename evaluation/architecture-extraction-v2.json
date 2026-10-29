@@ -1,0 +1,593 @@
+{
+  "spec": {
+    "modes": [
+      "buffered",
+      "text_buffered",
+      "audio_buffered",
+      "streaming",
+      "guarded"
+    ],
+    "repeats": 1,
+    "warmup": false,
+    "task": "extraction",
+    "instruction": "Reply in two short sentences.",
+    "action_limit": 100,
+    "allowed_actions": [
+      "refund",
+      "credit",
+      "reserve"
+    ],
+    "context": "Extract name, quantity, item, color and delivery_day.",
+    "expected_fields": {
+      "name": "Alex Test",
+      "quantity": "2",
+      "item": "notebooks",
+      "color": "blue",
+      "delivery_day": "Friday"
+    }
+  },
+  "input": "frontend/lab/extraction.wav",
+  "measurement": "Server only; no browser playback or acoustic latency",
+  "runs": [
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 69766,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "946fd6e8-a3f1-4e73-9a68-ab1b512b6cb3",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 131.91
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 578.02
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1213.93
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1239.17
+        },
+        {
+          "name": "tts_request",
+          "ms": 1239.75
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 3593.03
+        },
+        {
+          "name": "response_complete",
+          "ms": 3923.95
+        }
+      ],
+      "metrics": {
+        "stt_ms": 446.11,
+        "llm_first_token_ms": 635.91,
+        "tts_first_audio_ms": 2353.28,
+        "server_first_audio_ms": 3593.03,
+        "server_complete_ms": 3923.95,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      }
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 73735,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "386dcdb8-bf81-417e-bbad-b82556892e96",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.63
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 272.19
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 923.69
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 948.44
+        },
+        {
+          "name": "tts_request",
+          "ms": 949.25
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1804.69
+        },
+        {
+          "name": "response_complete",
+          "ms": 2105.84
+        }
+      ],
+      "metrics": {
+        "stt_ms": 264.56,
+        "llm_first_token_ms": 651.5,
+        "tts_first_audio_ms": 855.44,
+        "server_first_audio_ms": 1804.69,
+        "server_complete_ms": 2105.84,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      }
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 75844,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "2dfc2f3d-c68b-4848-952d-43d89df33dab",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.57
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 268.2
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 866.19
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 874.51
+        },
+        {
+          "name": "tts_request",
+          "ms": 874.85
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1725.99
+        },
+        {
+          "name": "response_complete",
+          "ms": 2038.72
+        }
+      ],
+      "metrics": {
+        "stt_ms": 262.63,
+        "llm_first_token_ms": 597.99,
+        "tts_first_audio_ms": 851.14,
+        "server_first_audio_ms": 1725.99,
+        "server_complete_ms": 2038.72,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      }
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 77907,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "a48ffa1f-336b-4c11-a23b-090779dd251a",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.18
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 295.81
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 933.9
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 965.06
+        },
+        {
+          "name": "tts_request",
+          "ms": 965.46
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1825.2
+        },
+        {
+          "name": "response_complete",
+          "ms": 2196.19
+        }
+      ],
+      "metrics": {
+        "stt_ms": 290.63,
+        "llm_first_token_ms": 638.09,
+        "tts_first_audio_ms": 859.74,
+        "server_first_audio_ms": 1825.2,
+        "server_complete_ms": 2196.19,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      }
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 80110,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "231602d5-5b8e-432c-829b-18e709b72db1",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.17
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 290.94
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 874.02
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 901.5
+        },
+        {
+          "name": "tts_request",
+          "ms": 901.94
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1874.78
+        },
+        {
+          "name": "response_complete",
+          "ms": 2174.82
+        }
+      ],
+      "metrics": {
+        "stt_ms": 285.77,
+        "llm_first_token_ms": 583.08,
+        "tts_first_audio_ms": 972.84,
+        "server_first_audio_ms": 1874.78,
+        "server_complete_ms": 2174.82,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      }
+    }
+  ]
+}

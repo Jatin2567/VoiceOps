@@ -12,6 +12,8 @@ import os
 import time
 from contextlib import suppress
 from uuid import uuid4
+import platform
+import importlib.metadata
 from loguru import logger
 
 from pipecat.frames.frames import (LLMTextFrame, LLMFullResponseEndFrame,
@@ -30,6 +32,7 @@ from backend.infrastructure.providers.recorded_stt import RecordedGroqSTTService
 from backend.infrastructure.providers.edge_tts_client import EdgeTTSService
 from backend.pipelines.modes.cascade_topology import TranscriptToContext
 from backend.application.services.voice_calls import VoiceCalls
+from backend.application.services.experiment_evaluation import evaluate
 
 
 class Observation:
@@ -156,11 +159,13 @@ async def run_architecture(spec, mode, audio, emit):
     instruction += f"\nSandbox policy: allowed actions {spec.allowed_actions}; amount limit {spec.action_limit}."
     if spec.task == "action":
         instruction += " Always submit the requested action and amount to the tool, including requests exceeding policy; let the tool decide."
+    if spec.task == "extraction":
+        instruction += " Return only a valid JSON object containing the fields requested in the reference material."
     context = LLMContext(messages=[{"role": "system", "content": instruction}])
     stt = RecordedGroqSTTService(api_key=key, settings=RecordedGroqSTTService.Settings(
         model=os.getenv("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")))
     llm = GroqLLMService(api_key=key, settings=GroqLLMService.Settings(
-        model=os.getenv("GROQ_LLM_MODEL", "openai/gpt-oss-20b")))
+        model=os.getenv("GROQ_LLM_MODEL", "openai/gpt-oss-20b"), temperature=0, max_completion_tokens=1024))
     if spec.task == "action":
         context.set_tools(ToolsSchema(standard_tools=[FunctionSchema(name="sandbox_action",
             description="Simulate an action; never changes any external system.",
@@ -171,9 +176,10 @@ async def run_architecture(spec, mode, audio, emit):
             result = await sandbox_action(spec, mode, params.arguments, o)
             await params.result_callback(result)
         llm.register_function("sandbox_action", tool)
-    buffered = mode == "buffered"
+    buffer_text = mode in ("buffered", "text_buffered")
+    buffer_audio = mode in ("buffered", "audio_buffered")
     pipeline = Pipeline([stt, STTProbe(o), TranscriptToContext(context), llm,
-        TextGate(o, buffered), LabSpeech(o), OutputProbe(o, buffered), LLMAssistantAggregator(context)])
+        TextGate(o, buffer_text), LabSpeech(o), OutputProbe(o, buffer_audio), LLMAssistantAggregator(context)])
     task = PipelineTask(pipeline, enable_rtvi=False, cancel_timeout_secs=2,
                         setup_timeout_secs=5, start_timeout_secs=5)
     runner = PipelineRunner(handle_sigint=False, handle_sigterm=False)
@@ -201,7 +207,7 @@ async def run_architecture(spec, mode, audio, emit):
             raise RuntimeError(errors[0] if errors else "No complete response within the 60-second deadline.")
         await task.stop_when_done()
         await asyncio.wait_for(asyncio.shield(running), 4)
-        if buffered:
+        if buffer_audio:
             # Same 100 ms PCM packet size; only release time differs.
             for offset in range(0, len(o.audio), 3200):
                 emit({"type": "audio", "pcm": base64.b64encode(o.audio[offset:offset+3200]).decode()})
@@ -220,6 +226,7 @@ async def run_architecture(spec, mode, audio, emit):
             with suppress(asyncio.CancelledError, Exception):
                 await future
     answer = "".join(o.text)
+    versions = {name: importlib.metadata.version(name) for name in ("pipecat-ai", "groq", "edge-tts")}
     def delta(end, start):
         return round(o.first[end] - o.first[start], 2) if end in o.first and start in o.first else None
     return {"trace_id": trace, "mode": mode, "status": status, "error": error,
@@ -231,6 +238,12 @@ async def run_architecture(spec, mode, audio, emit):
             "server_complete_ms": o.first.get("response_complete"),
             "tool_overhead_ms": round(sum(t["overhead_ms"] for t in o.tools), 3)},
         "tools": o.tools, "audio_sha256": hashlib.sha256(audio).hexdigest(),
+        "evaluation": evaluate(spec, answer, o.tools),
+        "configuration": {"buffer_text": buffer_text, "buffer_audio": buffer_audio, "policy_enforced": mode == "guarded"},
+        "runtime": {"commit": os.getenv("RENDER_GIT_COMMIT", os.getenv("VOICEOPS_COMMIT", "local-unversioned")),
+                    "python": platform.python_version(), "dependencies": versions, "region": os.getenv("RENDER_REGION", "unknown")},
         "phrase_match": spec.expected_phrase.casefold() in answer.casefold() if spec.expected_phrase else None,
         "providers": {"stt": os.getenv("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo"),
-                      "llm": os.getenv("GROQ_LLM_MODEL", "openai/gpt-oss-20b"), "tts": "Edge-TTS"}}
+                      "llm": os.getenv("GROQ_LLM_MODEL", "openai/gpt-oss-20b"), "tts": "Edge-TTS",
+                      "voice": os.getenv("EDGE_TTS_VOICE", EdgeTTSService.DEFAULT_VOICE), "sample_rate": 16000,
+                      "llm_settings": {"temperature": 0, "max_completion_tokens": 1024}}}

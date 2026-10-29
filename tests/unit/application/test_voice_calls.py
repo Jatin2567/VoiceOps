@@ -16,8 +16,10 @@ def audio():
 
 
 @pytest.fixture
-def calls(monkeypatch):
+def calls(monkeypatch, tmp_path):
     monkeypatch.setenv("GROQ_API_KEY", "test-key")
+    from backend.application.services.usage_budget import UsageBudget
+    monkeypatch.setattr("backend.application.services.voice_calls.usage_budget", UsageBudget(str(tmp_path / "calls.sqlite")))
     return VoiceCalls()
 
 

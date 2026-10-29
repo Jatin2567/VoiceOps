@@ -18,6 +18,7 @@ from backend.infrastructure.persistence.mock_booking_repo import MockBookingRepo
 from backend.pipelines.factory import PipelineFactory, PipelineDAGContext
 from backend.pipelines.modes.cascade_topology import build_cascade_pipeline
 from backend.pipelines.processors.interceptor import DeterministicSidecarInterceptor
+from backend.application.services.usage_budget import usage_budget, BudgetExceeded
 
 
 class LocalTelemetry:
@@ -144,6 +145,10 @@ class VoiceCalls:
             raise CallError(503, "Voice capacity is busy. Try again shortly.")
         if session.turns >= 12:
             raise CallError(409, "This call reached 12 turns. Start a new call.")
+        try:
+            usage_budget.reserve("call-studio", 1)
+        except BudgetExceeded as exc:
+            raise CallError(429, str(exc))
         async with session.lock:
             self.active_turns += 1
             session.turns += 1

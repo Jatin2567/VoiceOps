@@ -3,7 +3,7 @@
 ## Architecture comparison lab
 
 The public root serves the general-purpose architecture lab. Choose a task, use a sample,
-record once or upload a WAV, then compare buffered, streaming and guarded streaming paths.
+record once or upload a WAV, then compare buffered, streaming, guarded and isolated text/audio buffering paths.
 Reference material, an optional expected phrase, and sandbox action policies are configurable.
 Results include measured server event timelines and browser trial-ready-to-scheduled-playback
 latency. Initial WAV upload and physical speaker output are excluded. JSON/CSV exports retain
@@ -13,7 +13,7 @@ Use `python scripts/start_render.py` for the combined service. The public gatewa
 `PORT` (default 10000); Streamlit uses loopback 8501 with base path `/studio`; the earlier API
 uses loopback 8000. `/health` and `/_stcore/health` on the gateway support Render health checks.
 The gateway exposes the bounded experiment channel and existing studio; the legacy API is private.
-Two experiments can run concurrently, with at most nine sequential trials each.
+Two experiments can run concurrently, with up to 30 repetitions per selected mode plus optional excluded warm-ups.
 
 Run `python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws` for live
 server comparisons; add `--task action --audio frontend/lab/action.wav` to inspect policy

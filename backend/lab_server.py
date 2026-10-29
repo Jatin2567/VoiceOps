@@ -6,6 +6,7 @@ the Streamlit studio are exposed by this process.
 import asyncio
 import base64
 import os
+import time
 from contextlib import asynccontextmanager, suppress
 from pathlib import Path
 from urllib.parse import urlsplit
@@ -20,11 +21,13 @@ from pydantic import ValidationError
 from backend.domain.models.experiment import ExperimentSpec
 from backend.application.services.architecture_lab import run_architecture
 from backend.application.services.voice_calls import CallError, VoiceCalls
+from backend.application.services.usage_budget import usage_budget, BudgetExceeded
 
 ROOT = Path(__file__).resolve().parents[1]
 load_dotenv(ROOT / ".env", override=False)
 active = 0
 STUDIO = os.getenv("STUDIO_ORIGIN", "http://127.0.0.1:8501")
+BOOT = time.monotonic()
 
 
 @asynccontextmanager
@@ -66,8 +69,14 @@ async def experiment(ws: WebSocket):
             raise ValueError("Use a recording under 25 seconds.")
         audio = base64.b64decode(encoded, validate=True)
         VoiceCalls.validate_audio(audio)
-        for trial, mode in spec.schedule():
-            await ws.send_json({"type": "run_start", "trial": trial, "mode": mode})
+        quota = usage_budget.reserve(ws.client.host if ws.client else "unknown", len(spec.schedule()))
+        await ws.send_json({"type": "accepted", "quota": quota, "planned_trials": len(spec.schedule())})
+        for position, (trial, mode) in enumerate(spec.schedule(), 1):
+            meta = {"trial": trial, "mode": mode, "position": position,
+                    "phase": "warmup" if trial == 0 else "measured",
+                    "server_uptime_ms": round((time.monotonic()-BOOT)*1000),
+                    "provider_warm_state": "uncontrolled"}
+            await ws.send_json({"type": "run_start", **meta})
             ready = await asyncio.wait_for(ws.receive_json(), 20)
             if ready.get("type") != "ready":
                 raise ValueError("Expected a trial-ready signal.")
@@ -92,7 +101,7 @@ async def experiment(ws: WebSocket):
             with suppress(asyncio.CancelledError):
                 await sender
             sender = None
-            await ws.send_json({"type": "result", "trial": trial, **result})
+            await ws.send_json({"type": "result", **meta, **result})
             # Browser finishes scheduled playback before the next architecture starts.
             ack = await asyncio.wait_for(ws.receive_json(), 90)
             if ack.get("type") != "next":
@@ -100,6 +109,8 @@ async def experiment(ws: WebSocket):
         await ws.send_json({"type": "complete"})
     except (WebSocketDisconnect, RuntimeError):
         pass
+    except BudgetExceeded as exc:
+        await ws.send_json({"type": "error", "message": str(exc), "code": "usage_limit"})
     except (ValueError, ValidationError, CallError, asyncio.TimeoutError):
         with suppress(Exception):
             await ws.send_json({"type": "error", "message": "Experiment could not finish. Check the recording and configuration, or retry after the service recovers."})

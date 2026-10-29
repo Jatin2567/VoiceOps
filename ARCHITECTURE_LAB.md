@@ -1,77 +1,99 @@
 # VoiceOps — hear the architecture
 
-VoiceOps compares voice pipeline architectures using identical spoken inputs, live providers,
-inspectable traces and downloadable evidence. General conversation, document questions,
-extraction and simulated actions share one experiment harness. The earlier booking call studio
-remains an optional example at `/studio/`. This document supersedes the original PRD's
-two-mode benchmark surface; existing Pipecat and ports/adapters remain in use.
+VoiceOps compares orchestration choices with identical WAV inputs, live Groq and Edge-TTS,
+measured events, supplied correctness criteria and exportable reports. The booking call studio
+is one optional example at `/studio/`. This document supersedes the original PRD surface.
 
-## Implemented comparisons
+## Controlled comparisons
 
-| Mode | Orchestration | Delivery |
-| --- | --- | --- |
-| Buffered cascade | Recorded-turn Whisper → Groq LLM → complete text → Edge-TTS | Hold all PCM until completion |
-| Streaming cascade | Same STT and LLM → sentence-level Edge-TTS | Progressive PCM over WebSocket |
-| Guarded streaming | Same streaming path with deterministic sandbox policy | Same progressive delivery |
+| Mode | LLM text before synthesis | Audio delivery | Deterministic policy |
+| --- | --- | --- | --- |
+| Buffered | Hold full text | Hold full audio | No |
+| Full text · streamed audio | Hold full text | Progressive PCM | No |
+| Streamed text · held audio | Incremental | Hold full audio | No |
+| Streaming | Incremental | Progressive PCM | No |
+| Guarded streaming | Incremental | Progressive PCM | Yes |
 
-These modes compare buffering, streaming and business-policy enforcement. Native speech-to-speech,
-continuous transcription and full-duplex interruptions are not implemented. All three use Groq
-Whisper on a completed utterance. There is no injected delay to manufacture a streaming advantage.
+Compare buffered vs full-text/streamed-audio to vary delivery only; buffered vs streamed-text/held-audio
+varies text gating only. Streaming vs guarded varies deterministic checks. Every mode shares recorded-turn
+Groq Whisper, the same LLM, prompt, reference material and tools. There are no injected delays.
+Native speech-to-speech, continuous transcription and full-duplex interruptions are not implemented.
 
-## Experiment contract
+## Experiment and statistical contract
 
-- Reuse exact WAV bytes and SHA-256 across every trial. Context starts fresh each trial.
-- Use identical task settings, model configuration, tools and prompts across modes.
-- Select up to three repetitions; run sequentially, rotating architecture order each repetition.
-- Report observed events: STT request, transcript, first LLM text token, TTS request, first PCM,
-  completion. Tool results include local evaluation duration, enforcement flag and outcome.
-- Display completed counts, failures, median and nearest-rank p95. Never hide failed trials.
-- Optional expected phrase checks only a substring; human review determines task quality.
-- Every tool action is simulated. Guarded mode checks the allowlist and amount cap. All modes
-  enforce basic type/range validation. Models can independently follow policy in baseline modes.
-- Export configuration, provider models, input hash, responses, metrics and events as JSON;
-  CSV contains one row per trial. History and recordings stay in browser memory, not a public archive.
+Choose 1–30 repetitions per mode. The browser records a randomized starting offset, then rotates order
+each repetition. Optional trial-zero warm-ups remain visible and consume quota but are excluded from
+measured summaries. Each trial starts fresh context. Process uptime is recorded; provider cache state
+remains uncontrolled. First measured trials are retained rather than silently discarded.
+
+Median uses completed measured runs with finite browser playback metrics. Failures and counts remain
+visible. Nearest-rank p95 is withheld below 20 samples and remains exploratory above that threshold.
+Paired effects match input SHA-256 and repetition. Percentile bootstrap intervals use 1,000 resamples
+and require at least five pairs. They describe repeated trials on this input, not a population of speakers
+or tasks. Network variation, provider load and caching remain uncontrolled; no universal speedup is claimed.
+
+Tasks support required/forbidden facts (normalized literal matching), exact JSON field values, optional
+substring matching and action/amount/outcome checks that must match the same tool call. These checks test
+supplied criteria, not semantic truth. Each response shows pass/fail/unscored alongside latency. An
+unguarded baseline can deliberately fail a policy criterion while completing its speech pipeline.
+All actions are simulations without external effects. Every mode enforces transport validation;
+guarded mode additionally checks the action allowlist and amount cap.
 
 ## Measurement boundaries
 
-Browser time starts with the trial-ready signal and ends at the first scheduled AudioContext PCM
-sample. It includes server processing and delivery but excludes initial WAV upload, speech duration,
-pause detection and physical device output latency. A short playback lead avoids immediate underruns.
+Primary browser latency starts at the trial-ready signal and ends at first scheduled AudioContext PCM.
+It includes server work and response delivery. Initial WAV upload, speech duration, pause detection and
+physical device latency are excluded. Upload/admission round trip is recorded once per experiment.
+Microphone inputs record last-above-threshold capture block to detected endpoint; this is an estimate,
+not an acoustic measurement, and deliberate user wait before running is excluded.
 
-Server time starts before pipeline construction, using a monotonic clock. STT latency starts at
-the transcription submission marker. LLM first-token latency ends at first text (tool-only calls may
-delay that marker). TTS first-audio latency spans first synthesis request to first PCM at output.
-Stages can overlap, so these values are not an additive decomposition. Missing values remain null.
+Reports separately record first PCM receipt, scheduling lead, late packet count and scheduled silence
+gaps. These are not hardware underrun measurements. Browser baseLatency/outputLatency are labelled
+estimates when available. No mouth-to-ear total is claimed. Server event times use a separate monotonic
+clock starting before pipeline construction. STT request to transcript, transcript to first LLM text,
+and first synthesis request to first PCM are observed spans. Stages may overlap and must not be summed.
+Tool overhead measures local policy evaluation, not the full LLM/tool round trip.
 
-Provider responses can differ. Hosting warm-up, provider caching and network traffic are uncontrolled.
-First trials are retained, not silently discarded. One to three samples support exploration, not
-statistical superiority claims. Repeat and export across sessions for stronger evidence.
+## Reproducibility and recovery
 
-## Implementation and limits
+JSON includes spec, input hash, results, observed events, deployment commit when RENDER_GIT_COMMIT is
+available, Python/library versions, voice, sample rate, region when known, and LLM settings (temperature
+0; max_completion_tokens 1024, including reasoning tokens). Provider output is not guaranteed identical.
+CSV contains one row per trial. Reports retain partial, failed and interrupted evidence.
 
-The public gateway serves a static light interface and bounded same-origin WebSocket channel,
-and proxies the Streamlit call studio. The legacy API stays on loopback. Render supervises the shared API/gateway process and the Streamlit process. Every mode executes a real Pipecat frame pipeline. Buffered gates text and audio;
-streaming sends PCM as it crosses the output probe. No synthetic timings are presented as results.
+History stays in tab memory by default. Explicit opt-in saves reports to localStorage for recovery after
+reload. Transcripts and settings are included; recordings and blob URLs are excluded. Clear removes saved
+and in-memory reports. Nothing is published to a shared archive. Switching task types preserves selected
+audio, reference material and criteria; Use sample voice explicitly replaces them with a chosen fixture.
+The older studio benchmark menu was retired because its scenario labels did not select distinct fixtures.
 
-Two experiments can run concurrently, each with at most nine trials and a 60-second deadline per
-pipeline. Browser audio is capped at 25 seconds. Disconnects cancel provider work. Reports are
-ephemeral and unauthenticated; use fictional inputs. Free-host sleeping affects availability.
+## Runtime and usage limits
 
-## Reproduce
+The public gateway serves the light lab, same-origin WebSocket experiments and proxied Streamlit studio.
+The private API stays on loopback. API and gateway share a Python process/provider imports on free Render.
+Each pipeline has a 60-second deadline. Two experiments can run concurrently. Disconnect cancels active
+work. Browser recordings cap at 25 seconds; API WAV validation permits up to 30 seconds.
+
+SQLite reservations are atomic and shared across lab and studio. Defaults: 300 attempted trials per
+server/UTC day, 150/address/day, 12 experiment starts/address/10-minute window. Studio shares one client
+bucket. Reservations include planned warm-ups, failures and cancellations; they are not refunded.
+Set VOICEOPS_DAILY_TRIALS, VOICEOPS_CLIENT_DAILY_TRIALS, VOICEOPS_STARTS_PER_10_MIN and
+VOICEOPS_BUDGET_PATH in the server environment. Ephemeral redeploys may reset counters. This is a usage
+brake, not authentication or a guaranteed monetary cap. Free-host sleep can delay availability.
+
+## Run and verify
 
 ```bash
 pip install '.[dev]'
 python scripts/start_render.py
 pytest -q
 node --test tests/*.test.mjs
-python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws
-python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws --task action --audio frontend/lab/action.wav
+python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws --modes buffered text_buffered audio_buffered streaming guarded
+python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws --task extraction
+python scripts/evaluate_architectures.py --url ws://localhost:10000/lab/ws --task action
 ```
 
-Set `GROQ_API_KEY` in ignored `.env`. Optional settings: `GROQ_WHISPER_MODEL`, `GROQ_LLM_MODEL`,
-`EDGE_TTS_VOICE`. Open port 10000 (or `PORT`) for the lab. CLI evaluation measures server stages;
-browser playback must be tested separately. Live tests consume provider quota.
-
-Core source: `backend/application/services/architecture_lab.py`, `backend/domain/models/experiment.py`,
-`backend/lab_server.py`, and `frontend/lab/`. Controlled-provider lifecycle tests verify audio gating,
-progressive delivery, observed stages, policy outcomes and bounded configuration.
+Configure GROQ_API_KEY in ignored .env; optional GROQ_WHISPER_MODEL, GROQ_LLM_MODEL and EDGE_TTS_VOICE.
+Open port 10000 (or PORT). CLI reports contain server measurements only; use the browser for playback
+acceptance tests. Live tests consume quota. The public repo includes controlled-provider lifecycle,
+evaluation, atomic budget, statistics, scheduling-gap and recovery-serialization tests.
