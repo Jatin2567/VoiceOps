@@ -5,6 +5,8 @@ from pathlib import Path
 import httpx
 import streamlit as st
 
+from frontend.components.live_call import render_live_call
+from frontend.components.reference import render_reference
 from frontend.components.audit_ledger import render_audit_ledger
 from frontend.components.metrics_display import render_metrics_display
 from frontend.components.session_controls import render_session_controls
@@ -27,7 +29,7 @@ with st.sidebar:
                 unsafe_allow_html=True)
     st.caption("VOICE INTELLIGENCE WORKSPACE")
     st.markdown("---")
-    page = st.radio("Workspace", ["Overview", "Run history", "Architecture guide"],
+    page = st.radio("Workspace", ["Live call", "Benchmark lab", "Run history", "Reference"],
                     label_visibility="collapsed")
     st.markdown("---")
     st.markdown("**Your environment**")
@@ -46,7 +48,9 @@ with st.sidebar:
 
 st.markdown('<div class="eyebrow">WORKSPACE / ' + page.upper() + '</div>',
             unsafe_allow_html=True)
-if page == "Overview":
+if page == "Live call":
+    render_live_call(BACKEND_API_URL, backend_online)
+elif page == "Benchmark lab":
     st.markdown('''<section class="hero"><div class="hero-label">BUILT FOR CONVERSATIONS</div>
     <h1>Better voice AI.<br><span>Starts with listening.</span></h1>
     <p>Your space to compare voice pipelines, explore response times, and put guardrails to the test.</p>
@@ -67,13 +71,4 @@ elif page == "Run history":
     st.caption("Review recent benchmarks and the policies that shaped each response.")
     render_audit_ledger(BACKEND_API_URL, None)
 else:
-    st.title("Three paths. One clear picture.")
-    st.caption("Choose the architecture that fits the conversation you want to build.")
-    for title, description in [
-        ("01 / Cascade", "Speech to text with Groq Whisper, reasoning with Groq LLM, and speech generation with Edge-TTS. Compare each stage of the conversation."),
-        ("02 / Hybrid", "Groq and Edge-TTS with deterministic tool guardrails. Inspect booking conflicts and cancellation rules alongside latency."),
-    ]:
-        with st.container(border=True):
-            st.subheader(title)
-            st.write(description)
-    st.info("Time to first audio (TTFA) measures the wait before an agent starts speaking. Total turn latency measures the complete turn.")
+    render_reference()

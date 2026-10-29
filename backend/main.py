@@ -9,6 +9,7 @@ from backend.api.dependencies import get_container
 from backend.api.v1.routes_benchmark import router as benchmark_router
 from backend.api.v1.routes_telemetry import router as telemetry_router
 from backend.api.v1.ws_streaming import router as ws_router
+from backend.api.v1.routes_calls import router as calls_router
 
 
 @asynccontextmanager
@@ -63,6 +64,7 @@ def create_app() -> FastAPI:
     # Mount API v1 Routers
     app.include_router(benchmark_router, prefix="/v1")
     app.include_router(telemetry_router, prefix="/v1")
+    app.include_router(calls_router, prefix="/v1")
     app.include_router(ws_router)
 
     return app

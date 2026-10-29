@@ -68,6 +68,7 @@ class BenchmarkRunnerService:
         run_future = None
         response_future = None
         feed_future = None
+        context = None
         result = BenchmarkResult(trace_id=trace_id, mode=request.mode,
                                  status=BenchmarkStatus.RUNNING)
         try:
@@ -163,6 +164,14 @@ class BenchmarkRunnerService:
                     run_future.cancel()
                     with suppress(asyncio.CancelledError, Exception):
                         await run_future
+            # Preserve observed tool mutations even if a later speech stage fails.
+            if context:
+                result.transcription = context.telemetry_processor.transcription
+                result.response_text = context.telemetry_processor.response_text or None
+                result.ttfa_ms = context.telemetry_processor.computed_ttfa_ms
+                if context.interceptor:
+                    result.interception_count = context.interceptor.interception_count
+                    result.guardrail_violations = context.interceptor.violations_detected
             result.completed_at = datetime.now(timezone.utc)
             await self.telemetry_repo.save_benchmark_result(result)
             self._active_tasks.pop(trace_id, None)

@@ -1,0 +1,71 @@
+{
+  "timestamp_utc": "2026-10-29T15:18:06.035100+00:00",
+  "input": "synthetic spoken requests; live Groq and Edge-TTS",
+  "cases": [
+    {
+      "case": "booking",
+      "passed": true,
+      "status": "completed",
+      "trace_id": "8111434a-fa65-42e6-bb5e-41d9ec8ace0c",
+      "tool_checks": 2,
+      "policy_blocks": 0,
+      "ttfa_ms": 3894.84,
+      "booking_count": 1
+    },
+    {
+      "case": "duplicate_turn",
+      "passed": true
+    },
+    {
+      "case": "conflict",
+      "passed": true,
+      "status": "completed",
+      "trace_id": "91395da2-7a3e-4f4d-a878-e0d14824143c",
+      "tool_checks": 1,
+      "policy_blocks": 0,
+      "ttfa_ms": 3898.67,
+      "booking_count": 1
+    },
+    {
+      "case": "cancellation",
+      "passed": true,
+      "status": "completed",
+      "trace_id": "785dd0cc-d54e-4804-a77c-7cba69df675c",
+      "tool_checks": 1,
+      "policy_blocks": 0,
+      "ttfa_ms": 2845.37,
+      "booking_count": 1
+    },
+    {
+      "case": "unknown_cancellation",
+      "passed": true,
+      "status": "completed",
+      "trace_id": "cbab75c6-6741-4294-a76e-e1775721df27",
+      "tool_checks": 1,
+      "policy_blocks": 1,
+      "ttfa_ms": 2960.76,
+      "booking_count": 1
+    },
+    {
+      "case": "near_booking",
+      "passed": true,
+      "status": "completed",
+      "trace_id": "01083bd9-e280-4d18-bd3c-80b8c0b8efc6",
+      "tool_checks": 2,
+      "policy_blocks": 0,
+      "ttfa_ms": 3195.5,
+      "booking_count": 2
+    },
+    {
+      "case": "late_cancellation",
+      "passed": true,
+      "status": "completed",
+      "trace_id": "ddc2edc6-f35b-4c2f-81b2-8c86e3ad5eb9",
+      "tool_checks": 1,
+      "policy_blocks": 1,
+      "ttfa_ms": 4872.96,
+      "booking_count": 2
+    }
+  ],
+  "passed": true
+}

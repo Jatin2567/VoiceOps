@@ -43,6 +43,7 @@ def build_cascade_pipeline(
     llm_model: str = "openai/gpt-oss-20b",
     interceptor=None,
     system_instruction: Optional[str] = None,
+    conversation_context=None,
 ) -> Tuple[Pipeline, TelemetryProcessor]:
     """
     Build and link the Cascade pipeline DAG.
@@ -68,7 +69,7 @@ def build_cascade_pipeline(
         ) for t in BOOKING_TOOLS])
         for tool in BOOKING_TOOLS:
             llm.register_function(tool["name"], interceptor.handle_tool_call)
-    context = LLMContext(messages=[{"role": "system", "content": instruction + " " + (system_instruction or "")}])
+    context = conversation_context or LLMContext(messages=[{"role": "system", "content": instruction + " " + (system_instruction or "")}])
     if tools:
         context.set_tools(tools)
     tts = EdgeTTSService(voice=edge_voice)
@@ -77,6 +78,7 @@ def build_cascade_pipeline(
         mode=PipelineMode.HYBRID if interceptor else PipelineMode.CASCADE,
         queue_publisher=queue_publisher,
     )
+    telemetry.conversation_context = context
 
     pipeline = Pipeline([
         stt,

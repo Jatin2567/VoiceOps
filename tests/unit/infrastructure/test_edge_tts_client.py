@@ -1,5 +1,6 @@
 """Unit tests for custom Edge-TTS Pipecat adapter (Directive 3)."""
 import unittest
+import os
 
 from pipecat.frames.frames import AudioRawFrame, TTSAudioRawFrame, TTSStartedFrame, TTSStoppedFrame
 from pipecat.services.tts_service import TTSService
@@ -25,6 +26,7 @@ class TestEdgeTTSClient(unittest.IsolatedAsyncioTestCase):
         self.assertIsInstance(frames[0], TTSStartedFrame)
         self.assertIsInstance(frames[1], TTSStoppedFrame)
 
+    @unittest.skipUnless(os.getenv("RUN_LIVE_PROVIDER_TESTS") == "1", "Opt-in Edge-TTS network test")
     async def test_run_tts_yields_audio_raw_frames(self):
         """
         CRITICAL (Directive 3): Verify run_tts executes synthesis and yields AudioRawFrame objects.

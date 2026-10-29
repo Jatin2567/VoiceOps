@@ -58,6 +58,8 @@ class TelemetryProcessor(FrameProcessor):
         self._response_chunks: List[str] = []
         self._lock = asyncio.Lock()
         self.response_finished = asyncio.Event()
+        self.capture_audio = False
+        self.output_audio = bytearray()
 
     @property
     def trace_id(self) -> str:
@@ -114,6 +116,8 @@ class TelemetryProcessor(FrameProcessor):
 
         # 4. Capture T1 & TTFA: First synthesized or output audio frame
         elif isinstance(frame, (TTSAudioRawFrame, OutputAudioRawFrame)):
+            if self.capture_audio:
+                self.output_audio.extend(frame.audio)
             if self._t0_ms is not None and not self._ttfa_recorded:
                 self._t1_ms = now_ms
                 self._ttfa_recorded = True

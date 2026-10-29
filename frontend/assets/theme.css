@@ -24,6 +24,8 @@ p,label,[data-testid="stCaptionContainer"] {color:#5f6368;}
 [data-testid="stMetricValue"] {font-size:28px;color:#202124;}
 .stButton>button {border-radius:999px;min-height:46px;font-weight:600;}
 .stButton>button[kind="primary"] {background:#1967d2;border-color:#1967d2;color:white;}
+.stButton>button[kind="primary"] p {color:white;}
+.stButton>button:disabled {opacity:.5;}
 .stButton>button:hover {border-color:#1967d2;}
 [data-testid="stChatMessage"] {background:#eef3fc;border-radius:18px;}
 .empty-state {text-align:center;padding:35px 20px;background:#fff;border:1px dashed #c9d5e7;border-radius:20px;margin:12px 0 24px;}
@@ -31,3 +33,13 @@ p,label,[data-testid="stCaptionContainer"] {color:#5f6368;}
 .empty-state p {margin:0;font-size:14px;}
 @media(max-width:640px){.hero {padding:25px;} .block-container{padding:1.5rem 1rem;}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+
+.call-hero {padding:32px 0 26px;max-width:850px;}
+.call-hero h1 {font-size:clamp(38px,5vw,64px);line-height:1.08;font-weight:650;margin:16px 0;}
+.call-hero h1 span {color:#1967d2;}
+.call-hero p {font-size:17px;line-height:1.65;max-width:620px;}
+.pill-row {display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+.pill-row span {padding:7px 12px;border:1px solid #dce4f2;border-radius:999px;background:#fff;color:#3d5377;font-size:12px;}
+[data-testid="stAudioInput"] {border-radius:16px;}
+button:focus-visible,a:focus-visible {outline:3px solid #4285f4;outline-offset:3px;}
+[data-testid="stTabs"] {margin-top:24px;}

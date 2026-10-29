@@ -60,6 +60,9 @@ class LocalFactory:
         telemetry = TelemetryProcessor(trace_id, mode, UpstashQueuePublisher())
         interceptor = DeterministicSidecarInterceptor(
             trace_id, GuardrailPolicyService(MockBookingRepository()))
+        if self.behavior == "error":
+            # Simulate an observed action before a downstream provider fails.
+            interceptor._interception_count = 1
         # Exercise the actual Hybrid interceptor's StartFrame and EndFrame handling.
         pipeline = Pipeline([self.voice, interceptor, telemetry])
         return PipelineDAGContext(mode, trace_id, pipeline, telemetry, interceptor)
@@ -112,6 +115,7 @@ class TestBenchmarkRunner(unittest.IsolatedAsyncioTestCase):
         result = await self.run_benchmark()
         self.assertEqual(result.status, BenchmarkStatus.FAILED)
         self.assertIn('Test provider unavailable', result.error_message)
+        self.assertEqual(result.interception_count, 1)
         self.assertIsNone(result.ttfa_ms)
 
     async def test_shutdown_cancels_active_benchmark(self):

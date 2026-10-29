@@ -39,6 +39,9 @@ class EdgeTTSService(TTSService):
             voice=resolved_voice,
             language="en",
         )
+        # Edge and ffmpeg can need more than Pipecat's three-second default
+        # before the first PCM chunk. The runner still bounds the whole turn.
+        kwargs.setdefault("stop_frame_timeout_s", 20.0)
         super().__init__(sample_rate=sample_rate, settings=settings, **kwargs)
         self._voice = resolved_voice
         self._sample_rate = sample_rate
