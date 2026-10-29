@@ -25,10 +25,10 @@ speedup percentages. See ARCHITECTURE_LAB.md for the complete measurement contra
 
 Open **Conversation** on the public root. Configure instructions and optional reference material, then
 start the microphone once. Captured speech interrupts a reply; a short pause submits a complete turn.
-Use headphones. Stop reply and End conversation are always available during a session.
+Use headphones. Sound check lets you select an input, check its level and play a local speaker tone; permission errors explain how to recover. Stop reply and End conversation are always available during a session.
 Try sample conversation sends two prerecorded requests through live providers and demonstrates context.
 The readiness indicator reports server/configuration state, with providers verified during use.
-Evaluation suite runs eight varied synthetic requests and exports partial or completed reports.
+Evaluation suite runs eight varied synthetic requests and exports partial or completed reports. Session runs includes suite and comparison history, JSON imports and compatible release comparisons. Opt-in browser saving excludes audio. The field guide describes the literal checker and measurement limits.
 See ARCHITECTURE_LAB.md for the protocol, limits and measurement boundaries.
 
 ## Legacy booking voice calls

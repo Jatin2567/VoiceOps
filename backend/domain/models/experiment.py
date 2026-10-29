@@ -15,6 +15,7 @@ class ExperimentSpec(BaseModel):
     context: str = Field(default="", max_length=6000)
     expected_phrase: str = Field(default="", max_length=200)
     required_facts: list[str] = Field(default_factory=list, max_length=20)
+    acceptable_facts: list[list[str]] = Field(default_factory=list, max_length=20)
     forbidden_facts: list[str] = Field(default_factory=list, max_length=20)
     expected_fields: dict[str, str] = Field(default_factory=dict, max_length=20)
     expected_action: str = Field(default="", max_length=40)
@@ -31,6 +32,8 @@ class ExperimentSpec(BaseModel):
             raise ValueError("Action names must contain 1–40 characters.")
         if any(not s.strip() or len(s) > 200 for s in self.required_facts + self.forbidden_facts):
             raise ValueError("Facts must contain 1–200 characters.")
+        if any(not group or len(group) > 5 or any(not s.strip() or len(s) > 200 for s in group) for group in self.acceptable_facts):
+            raise ValueError("Use 1–5 nonempty alternatives of up to 200 characters per fact.")
         if any(not k or len(k) > 80 or len(v) > 200 for k, v in self.expected_fields.items()):
             raise ValueError("Expected fields are too long.")
         return self

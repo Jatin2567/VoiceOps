@@ -1,8 +1,8 @@
 // Shared presentation rules are also exercised outside the browser.
-export function guidedCriteria({facts='',forbidden='',fields='',action='',amount='',outcome=''}={}){
+export function guidedCriteria({facts='',alternatives='',forbidden='',fields='',action='',amount='',outcome=''}={}){
  const lines=s=>s.split('\n').map(v=>v.trim()).filter(Boolean), expected_fields={};
  for(const line of lines(fields)){const split=line.indexOf('=');if(split<1)throw Error('Use field = value, one expected field per line.');const key=line.slice(0,split).trim(),value=line.slice(split+1).trim();if(!key||!value)throw Error('Each field needs a name and expected value.');expected_fields[key]=value;}
- return {required_facts:lines(facts),forbidden_facts:lines(forbidden),expected_fields,...(action?{expected_action:action.trim()}:{}),...(amount!==''?{expected_amount:Number(amount)}:{}),...(outcome?{expected_tool_status:outcome}:{})};
+ return {required_facts:lines(facts),acceptable_facts:lines(alternatives).map(line=>line.split('|').map(v=>v.trim()).filter(Boolean)),forbidden_facts:lines(forbidden),expected_fields,...(action?{expected_action:action.trim()}:{}),...(amount!==''?{expected_amount:Number(amount)}:{}),...(outcome?{expected_tool_status:outcome}:{})};
 }
 export function comparisonRows(runs){
  const latest=new Map();for(const run of runs)if(run.status==='completed'&&run.phase!=='warmup')latest.set(run.mode,run);

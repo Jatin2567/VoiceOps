@@ -1,0 +1,4819 @@
+{
+  "suite_id": "voiceops-core-v1",
+  "manifest": {
+    "id": "voiceops-core-v1",
+    "version": 1,
+    "limitations": [
+      "Eight synthetic English utterances",
+      "Literal supplied criteria, not semantic grading",
+      "Server clocks and browser playback are separate",
+      "No population-wide performance claim"
+    ],
+    "cases": [
+      {
+        "id": "explain-rainbow",
+        "title": "Explain a natural phenomenon",
+        "audio": "/sample.wav",
+        "spec": {
+          "task": "conversation",
+          "required_facts": [
+            "light",
+            "water"
+          ]
+        }
+      },
+      {
+        "id": "order-tea",
+        "title": "Explain a sequence",
+        "audio": "/sequence.wav",
+        "spec": {
+          "task": "conversation",
+          "required_facts": [
+            "water",
+            "tea"
+          ]
+        }
+      },
+      {
+        "id": "returns-policy",
+        "title": "Answer from a reference",
+        "audio": "/knowledge.wav",
+        "spec": {
+          "task": "knowledge",
+          "context": "Unused items may be returned within 30 days with the original receipt. Opened software cannot be returned.",
+          "required_facts": [
+            "30",
+            "receipt"
+          ],
+          "forbidden_facts": [
+            "90 days"
+          ]
+        }
+      },
+      {
+        "id": "missing-fact",
+        "title": "Recognize a missing answer",
+        "audio": "/unknown.wav",
+        "spec": {
+          "task": "knowledge",
+          "context": "Our shop accepts unused returns within 30 days with a receipt. Store opening times are not provided.",
+          "instruction": "If the reference does not answer, reply exactly: The reference does not say.",
+          "required_facts": [
+            "reference does not say"
+          ]
+        }
+      },
+      {
+        "id": "extract-notebooks",
+        "title": "Extract an order",
+        "audio": "/extraction.wav",
+        "spec": {
+          "task": "extraction",
+          "context": "Extract name, quantity, item, color and delivery_day.",
+          "expected_fields": {
+            "name": "Alex Test",
+            "quantity": "2",
+            "item": "notebooks",
+            "color": "blue",
+            "delivery_day": "Friday"
+          }
+        }
+      },
+      {
+        "id": "extract-pens",
+        "title": "Extract a different order",
+        "audio": "/extraction2.wav",
+        "spec": {
+          "task": "extraction",
+          "context": "Extract name, quantity, item, color and delivery_day.",
+          "expected_fields": {
+            "name": "Sam Lee",
+            "quantity": "3",
+            "item": "pens",
+            "color": "black",
+            "delivery_day": "Monday"
+          }
+        }
+      },
+      {
+        "id": "policy-over-limit",
+        "title": "Reject an over-limit action",
+        "audio": "/action.wav",
+        "spec": {
+          "task": "action",
+          "expected_action": "refund",
+          "expected_amount": 150,
+          "expected_tool_status": "blocked",
+          "action_limit": 100
+        }
+      },
+      {
+        "id": "policy-within-limit",
+        "title": "Allow a valid simulation",
+        "audio": "/allowed.wav",
+        "spec": {
+          "task": "action",
+          "expected_action": "refund",
+          "expected_amount": 50,
+          "expected_tool_status": "simulated",
+          "action_limit": 100
+        }
+      }
+    ]
+  },
+  "modes": [
+    "buffered",
+    "text_buffered",
+    "audio_buffered",
+    "streaming",
+    "guarded"
+  ],
+  "created_at": "2026-10-29T20:01:56.528506+00:00",
+  "status": "completed",
+  "runs": [
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 41453,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "48eada3e-ff0d-4387-aca8-3804a45d0f7f",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.54
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 263.94
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 585.96
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 648.93
+        },
+        {
+          "name": "tts_request",
+          "ms": 649.45
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1460.15
+        },
+        {
+          "name": "tts_request",
+          "ms": 1652.23
+        },
+        {
+          "name": "tts_request",
+          "ms": 2674.97
+        },
+        {
+          "name": "response_complete",
+          "ms": 3680.59
+        }
+      ],
+      "metrics": {
+        "stt_ms": 258.4,
+        "llm_first_token_ms": 322.02,
+        "tts_first_audio_ms": 810.7,
+        "server_first_audio_ms": 1460.15,
+        "server_complete_ms": 3680.59,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "light"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "explain-rainbow",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 45188,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "948da1fb-8253-457d-83ee-018feaf2d1ef",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.49
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 252.45
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 571.46
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 637.13
+        },
+        {
+          "name": "tts_request",
+          "ms": 637.54
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1432.03
+        },
+        {
+          "name": "tts_request",
+          "ms": 1703.71
+        },
+        {
+          "name": "tts_request",
+          "ms": 2674.01
+        },
+        {
+          "name": "response_complete",
+          "ms": 3628.16
+        }
+      ],
+      "metrics": {
+        "stt_ms": 245.96,
+        "llm_first_token_ms": 319.01,
+        "tts_first_audio_ms": 794.49,
+        "server_first_audio_ms": 1432.03,
+        "server_complete_ms": 3628.16,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "light"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "explain-rainbow",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 48813,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "2417578b-9625-46af-8539-c0b9a7226411",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 9.11
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 277.1
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 437.73
+        },
+        {
+          "name": "tts_request",
+          "ms": 501.08
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 516.12
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1251.16
+        },
+        {
+          "name": "tts_request",
+          "ms": 1459.29
+        },
+        {
+          "name": "tts_request",
+          "ms": 2410.49
+        },
+        {
+          "name": "response_complete",
+          "ms": 3385.96
+        }
+      ],
+      "metrics": {
+        "stt_ms": 267.99,
+        "llm_first_token_ms": 160.63,
+        "tts_first_audio_ms": 750.08,
+        "server_first_audio_ms": 1251.16,
+        "server_complete_ms": 3385.96,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "light"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "explain-rainbow",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 52250,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "bbd13daa-1305-43eb-ba1d-636430a9edb0",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.72
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 266.7
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 2071.38
+        },
+        {
+          "name": "tts_request",
+          "ms": 2090.39
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 2142.19
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2832.63
+        },
+        {
+          "name": "tts_request",
+          "ms": 3025.09
+        },
+        {
+          "name": "tts_request",
+          "ms": 4091.0
+        },
+        {
+          "name": "response_complete",
+          "ms": 5125.2
+        }
+      ],
+      "metrics": {
+        "stt_ms": 260.98,
+        "llm_first_token_ms": 1804.68,
+        "tts_first_audio_ms": 742.24,
+        "server_first_audio_ms": 2832.63,
+        "server_complete_ms": 5125.2,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "light"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "explain-rainbow",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 57375,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "e21b820d-76c5-440b-af13-2b61ce9904c2",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.93
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 263.01
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 717.93
+        },
+        {
+          "name": "tts_request",
+          "ms": 739.35
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 787.14
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1502.44
+        },
+        {
+          "name": "tts_request",
+          "ms": 1693.45
+        },
+        {
+          "name": "tts_request",
+          "ms": 2645.1
+        },
+        {
+          "name": "response_complete",
+          "ms": 3792.06
+        }
+      ],
+      "metrics": {
+        "stt_ms": 257.08,
+        "llm_first_token_ms": 454.92,
+        "tts_first_audio_ms": 763.09,
+        "server_first_audio_ms": 1502.44,
+        "server_complete_ms": 3792.06,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "light"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "explain-rainbow",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 61203,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "52bab777-7c0e-4d39-93cb-cc65747608a6",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how to make a cup of tea, in order.",
+      "response": "1. Boil water in a kettle or on the stove.  \n2. While the water heats, place a tea bag or loose tea in a cup.  \n3. Pour the hot water over the tea, cover, and steep for 3\u20135 minutes.  \n4. Remove the tea bag or strain the leaves, then add milk, sugar, or lemon if desired.  \n5. Stir, taste, and enjoy your tea.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.24
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 258.89
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 762.31
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 857.35
+        },
+        {
+          "name": "tts_request",
+          "ms": 857.76
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1622.65
+        },
+        {
+          "name": "tts_request",
+          "ms": 1740.33
+        },
+        {
+          "name": "tts_request",
+          "ms": 2613.9
+        },
+        {
+          "name": "tts_request",
+          "ms": 3475.97
+        },
+        {
+          "name": "tts_request",
+          "ms": 4410.59
+        },
+        {
+          "name": "tts_request",
+          "ms": 5278.22
+        },
+        {
+          "name": "tts_request",
+          "ms": 6334.53
+        },
+        {
+          "name": "tts_request",
+          "ms": 7168.98
+        },
+        {
+          "name": "tts_request",
+          "ms": 8173.16
+        },
+        {
+          "name": "tts_request",
+          "ms": 9130.43
+        },
+        {
+          "name": "response_complete",
+          "ms": 10098.08
+        }
+      ],
+      "metrics": {
+        "stt_ms": 253.65,
+        "llm_first_token_ms": 503.42,
+        "tts_first_audio_ms": 764.89,
+        "server_first_audio_ms": 1622.65,
+        "server_complete_ms": 10098.08,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75429b6067d472b771105f06777357e5f895b1f4017b1e408170a39b8dfd3550",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "tea"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "order-tea",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 71313,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "5bcaa768-85b2-4e26-a0db-c9ed924fba2d",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how to make a cup of tea, in order.",
+      "response": "1. Boil water in a kettle or on the stove.  \n2. While the water heats, place a tea bag or loose tea in a cup.  \n3. Pour the hot water over the tea, cover, and steep for 3\u20135 minutes.  \n4. Remove the tea bag or strain the leaves, then add milk, sugar, or lemon if desired.  \n5. Stir, taste, and enjoy your tea.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.55
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 276.96
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 713.31
+        },
+        {
+          "name": "tts_request",
+          "ms": 716.04
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 811.98
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1453.95
+        },
+        {
+          "name": "tts_request",
+          "ms": 1586.82
+        },
+        {
+          "name": "tts_request",
+          "ms": 2490.21
+        },
+        {
+          "name": "tts_request",
+          "ms": 3341.86
+        },
+        {
+          "name": "tts_request",
+          "ms": 4262.92
+        },
+        {
+          "name": "tts_request",
+          "ms": 5115.73
+        },
+        {
+          "name": "tts_request",
+          "ms": 6096.32
+        },
+        {
+          "name": "tts_request",
+          "ms": 6978.91
+        },
+        {
+          "name": "tts_request",
+          "ms": 7982.89
+        },
+        {
+          "name": "tts_request",
+          "ms": 8834.25
+        },
+        {
+          "name": "response_complete",
+          "ms": 9822.92
+        }
+      ],
+      "metrics": {
+        "stt_ms": 270.41,
+        "llm_first_token_ms": 436.35,
+        "tts_first_audio_ms": 737.91,
+        "server_first_audio_ms": 1453.95,
+        "server_complete_ms": 9822.92,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75429b6067d472b771105f06777357e5f895b1f4017b1e408170a39b8dfd3550",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "tea"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "order-tea",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 81203,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "b4b02804-c579-4414-b8bd-2e46ef05bd56",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how to make a cup of tea, in order.",
+      "response": "1. Boil water in a kettle or on the stove.  \n2. While the water heats, place a tea bag or loose tea in a cup.  \n3. Pour the hot water over the tea, cover, and steep for 3\u20135 minutes.  \n4. Remove the tea bag or strain the leaves, then add milk, sugar, or lemon if desired.  \n5. Stir, taste, and enjoy your tea.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.57
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 240.85
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 801.48
+        },
+        {
+          "name": "tts_request",
+          "ms": 803.59
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 914.57
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1543.76
+        },
+        {
+          "name": "tts_request",
+          "ms": 1663.53
+        },
+        {
+          "name": "tts_request",
+          "ms": 2650.66
+        },
+        {
+          "name": "tts_request",
+          "ms": 3529.5
+        },
+        {
+          "name": "tts_request",
+          "ms": 4532.6
+        },
+        {
+          "name": "tts_request",
+          "ms": 5378.2
+        },
+        {
+          "name": "tts_request",
+          "ms": 6427.77
+        },
+        {
+          "name": "tts_request",
+          "ms": 7286.61
+        },
+        {
+          "name": "tts_request",
+          "ms": 8375.73
+        },
+        {
+          "name": "tts_request",
+          "ms": 9239.29
+        },
+        {
+          "name": "response_complete",
+          "ms": 10194.72
+        }
+      ],
+      "metrics": {
+        "stt_ms": 235.28,
+        "llm_first_token_ms": 560.63,
+        "tts_first_audio_ms": 740.17,
+        "server_first_audio_ms": 1543.76,
+        "server_complete_ms": 10194.72,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75429b6067d472b771105f06777357e5f895b1f4017b1e408170a39b8dfd3550",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "tea"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "order-tea",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 91407,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "735406a7-8474-4ca3-a401-913501039fc1",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how to make a cup of tea, in order.",
+      "response": "First, boil water and pour it over a tea bag or loose leaves in a cup. Let it steep for 3\u20135 minutes, then remove the tea bag or strain the leaves. Add milk, sugar, or lemon if desired, stir, and enjoy.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.29
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 269.72
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1034.87
+        },
+        {
+          "name": "tts_request",
+          "ms": 1065.1
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1107.5
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1812.43
+        },
+        {
+          "name": "tts_request",
+          "ms": 2008.21
+        },
+        {
+          "name": "tts_request",
+          "ms": 2962.61
+        },
+        {
+          "name": "response_complete",
+          "ms": 3942.49
+        }
+      ],
+      "metrics": {
+        "stt_ms": 262.43,
+        "llm_first_token_ms": 765.15,
+        "tts_first_audio_ms": 747.33,
+        "server_first_audio_ms": 1812.43,
+        "server_complete_ms": 3942.49,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75429b6067d472b771105f06777357e5f895b1f4017b1e408170a39b8dfd3550",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "tea"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "order-tea",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 95360,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "68f15437-d2de-49cf-96db-de84c74e587a",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how to make a cup of tea, in order.",
+      "response": "1. Boil water in a kettle or on the stove.  \n2. While the water heats, place a tea bag or loose tea in a cup.  \n3. Pour the hot water over the tea, cover, and steep for 3\u20135 minutes.  \n4. Remove the tea bag or strain the leaves, then add milk, sugar, or lemon if desired.  \n5. Stir, taste, and enjoy your tea.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.16
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 256.61
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 406.97
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 500.16
+        },
+        {
+          "name": "tts_request",
+          "ms": 500.59
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1250.59
+        },
+        {
+          "name": "tts_request",
+          "ms": 1370.61
+        },
+        {
+          "name": "tts_request",
+          "ms": 2349.3
+        },
+        {
+          "name": "tts_request",
+          "ms": 3225.23
+        },
+        {
+          "name": "tts_request",
+          "ms": 4200.18
+        },
+        {
+          "name": "tts_request",
+          "ms": 5175.71
+        },
+        {
+          "name": "tts_request",
+          "ms": 6145.62
+        },
+        {
+          "name": "tts_request",
+          "ms": 7010.52
+        },
+        {
+          "name": "tts_request",
+          "ms": 7989.87
+        },
+        {
+          "name": "tts_request",
+          "ms": 8835.2
+        },
+        {
+          "name": "response_complete",
+          "ms": 9819.91
+        }
+      ],
+      "metrics": {
+        "stt_ms": 251.45,
+        "llm_first_token_ms": 150.36,
+        "tts_first_audio_ms": 750.0,
+        "server_first_audio_ms": 1250.59,
+        "server_complete_ms": 9819.91,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75429b6067d472b771105f06777357e5f895b1f4017b1e408170a39b8dfd3550",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "water"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "tea"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "order-tea",
+      "task": "conversation"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 105266,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "eccef83c-5491-47c7-8c0f-8a7ac8d51534",
+      "status": "completed",
+      "error": null,
+      "transcript": "How long do I have to return an unused item, and do I need a receipt?",
+      "response": "You can return an unused item within 30 days. A return requires the original receipt. Opened software, however, cannot be returned.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.8
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 269.24
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 780.62
+        },
+        {
+          "name": "tts_request",
+          "ms": 787.05
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 808.57
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1539.26
+        },
+        {
+          "name": "tts_request",
+          "ms": 1724.65
+        },
+        {
+          "name": "tts_request",
+          "ms": 2693.63
+        },
+        {
+          "name": "response_complete",
+          "ms": 3660.9
+        }
+      ],
+      "metrics": {
+        "stt_ms": 263.44,
+        "llm_first_token_ms": 511.38,
+        "tts_first_audio_ms": 752.21,
+        "server_first_audio_ms": 1539.26,
+        "server_complete_ms": 3660.9,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "643d44781e61071c6f30ecfe48515e6a9524e0405469a6756da8529db05a7958",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "30"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "receipt"
+          },
+          {
+            "check": "forbidden fact absent",
+            "passed": true,
+            "expected": "90 days"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "returns-policy",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 108953,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "4288fbc9-f3a3-44be-b81b-f045208fc4cd",
+      "status": "completed",
+      "error": null,
+      "transcript": "How long do I have to return an unused item, and do I need a receipt?",
+      "response": "You can return an unused item within 30 days. A copy of the original receipt is required for the return.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.18
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 318.93
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 544.42
+        },
+        {
+          "name": "tts_request",
+          "ms": 555.92
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 572.8
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1302.69
+        },
+        {
+          "name": "tts_request",
+          "ms": 1489.98
+        },
+        {
+          "name": "response_complete",
+          "ms": 2433.41
+        }
+      ],
+      "metrics": {
+        "stt_ms": 311.75,
+        "llm_first_token_ms": 225.49,
+        "tts_first_audio_ms": 746.77,
+        "server_first_audio_ms": 1302.69,
+        "server_complete_ms": 2433.41,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "643d44781e61071c6f30ecfe48515e6a9524e0405469a6756da8529db05a7958",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "30"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "receipt"
+          },
+          {
+            "check": "forbidden fact absent",
+            "passed": true,
+            "expected": "90 days"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "returns-policy",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 111407,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "2d32883c-568b-43a7-92f5-c83ac62dce37",
+      "status": "completed",
+      "error": null,
+      "transcript": "How long do I have to return an unused item, and do I need a receipt?",
+      "response": "You can return an unused item within 30 days. A return requires the original receipt. Opened software, however, cannot be returned.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.19
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 256.68
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 673.08
+        },
+        {
+          "name": "tts_request",
+          "ms": 686.7
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 714.92
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1522.87
+        },
+        {
+          "name": "tts_request",
+          "ms": 1708.01
+        },
+        {
+          "name": "tts_request",
+          "ms": 2693.15
+        },
+        {
+          "name": "response_complete",
+          "ms": 3682.35
+        }
+      ],
+      "metrics": {
+        "stt_ms": 250.49,
+        "llm_first_token_ms": 416.4,
+        "tts_first_audio_ms": 836.17,
+        "server_first_audio_ms": 1522.87,
+        "server_complete_ms": 3682.35,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "643d44781e61071c6f30ecfe48515e6a9524e0405469a6756da8529db05a7958",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "30"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "receipt"
+          },
+          {
+            "check": "forbidden fact absent",
+            "passed": true,
+            "expected": "90 days"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "returns-policy",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 115094,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "5674149e-38f7-4841-996b-68cb7df12fc5",
+      "status": "completed",
+      "error": null,
+      "transcript": "How long do I have to return an unused item, and do I need a receipt?",
+      "response": "You can return an unused item within 30 days. A copy of the original receipt is required for the return.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.14
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 264.56
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 667.65
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 692.35
+        },
+        {
+          "name": "tts_request",
+          "ms": 692.75
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1449.09
+        },
+        {
+          "name": "tts_request",
+          "ms": 1638.07
+        },
+        {
+          "name": "response_complete",
+          "ms": 2583.0
+        }
+      ],
+      "metrics": {
+        "stt_ms": 259.42,
+        "llm_first_token_ms": 403.09,
+        "tts_first_audio_ms": 756.34,
+        "server_first_audio_ms": 1449.09,
+        "server_complete_ms": 2583.0,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "643d44781e61071c6f30ecfe48515e6a9524e0405469a6756da8529db05a7958",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "30"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "receipt"
+          },
+          {
+            "check": "forbidden fact absent",
+            "passed": true,
+            "expected": "90 days"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "returns-policy",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 117703,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "a9c11766-7a2e-4e66-aa3b-667b685e5108",
+      "status": "completed",
+      "error": null,
+      "transcript": "How long do I have to return an unused item, and do I need a receipt?",
+      "response": "You can return an unused item within 30 days. A copy of the original receipt is required for the return.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.84
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 300.08
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1110.66
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1139.48
+        },
+        {
+          "name": "tts_request",
+          "ms": 1139.98
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1925.99
+        },
+        {
+          "name": "tts_request",
+          "ms": 2083.07
+        },
+        {
+          "name": "response_complete",
+          "ms": 3037.13
+        }
+      ],
+      "metrics": {
+        "stt_ms": 294.24,
+        "llm_first_token_ms": 810.58,
+        "tts_first_audio_ms": 786.01,
+        "server_first_audio_ms": 1925.99,
+        "server_complete_ms": 3037.13,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "643d44781e61071c6f30ecfe48515e6a9524e0405469a6756da8529db05a7958",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "30"
+          },
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "receipt"
+          },
+          {
+            "check": "forbidden fact absent",
+            "passed": true,
+            "expected": "90 days"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "returns-policy",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 120766,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "1a273f6c-b026-40e9-b7cf-fb450b61bc5e",
+      "status": "completed",
+      "error": null,
+      "transcript": "What time does the shop open on Sunday?",
+      "response": "The reference does not say.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.91
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 254.43
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 817.45
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 824.75
+        },
+        {
+          "name": "tts_request",
+          "ms": 825.09
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1629.6
+        },
+        {
+          "name": "response_complete",
+          "ms": 1759.9
+        }
+      ],
+      "metrics": {
+        "stt_ms": 246.52,
+        "llm_first_token_ms": 563.02,
+        "tts_first_audio_ms": 804.51,
+        "server_first_audio_ms": 1629.6,
+        "server_complete_ms": 1759.9,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "9fc9391ff136f82937afc1b12c93581fffe1a169b024014b75162fe2c278a5b1",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "reference does not say"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "missing-fact",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 122532,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "9e13e7cf-c156-40a2-b1de-6ab4db3e0b0f",
+      "status": "completed",
+      "error": null,
+      "transcript": "What time does the shop open on Sunday?",
+      "response": "The reference does not say.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.11
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 258.34
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 786.31
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 794.56
+        },
+        {
+          "name": "tts_request",
+          "ms": 794.89
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1550.57
+        },
+        {
+          "name": "response_complete",
+          "ms": 1698.51
+        }
+      ],
+      "metrics": {
+        "stt_ms": 253.23,
+        "llm_first_token_ms": 527.97,
+        "tts_first_audio_ms": 755.68,
+        "server_first_audio_ms": 1550.57,
+        "server_complete_ms": 1698.51,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "9fc9391ff136f82937afc1b12c93581fffe1a169b024014b75162fe2c278a5b1",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "reference does not say"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "missing-fact",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 124235,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "9cb0b929-f421-44ae-a460-12ac16d93537",
+      "status": "completed",
+      "error": null,
+      "transcript": "What time does the shop open on Sunday?",
+      "response": "The reference does not say.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.1
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 255.74
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 671.58
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 677.83
+        },
+        {
+          "name": "tts_request",
+          "ms": 678.27
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1413.39
+        },
+        {
+          "name": "response_complete",
+          "ms": 1548.52
+        }
+      ],
+      "metrics": {
+        "stt_ms": 250.64,
+        "llm_first_token_ms": 415.84,
+        "tts_first_audio_ms": 735.12,
+        "server_first_audio_ms": 1413.39,
+        "server_complete_ms": 1548.52,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "9fc9391ff136f82937afc1b12c93581fffe1a169b024014b75162fe2c278a5b1",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "reference does not say"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "missing-fact",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 125797,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "c4c7c4d4-2062-454e-8800-69eea5d6a8f9",
+      "status": "completed",
+      "error": null,
+      "transcript": "What time does the shop open on Sunday?",
+      "response": "The reference does not say.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 4.77
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 273.0
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 821.01
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 831.8
+        },
+        {
+          "name": "tts_request",
+          "ms": 832.4
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1613.58
+        },
+        {
+          "name": "response_complete",
+          "ms": 1725.6
+        }
+      ],
+      "metrics": {
+        "stt_ms": 268.23,
+        "llm_first_token_ms": 548.01,
+        "tts_first_audio_ms": 781.18,
+        "server_first_audio_ms": 1613.58,
+        "server_complete_ms": 1725.6,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "9fc9391ff136f82937afc1b12c93581fffe1a169b024014b75162fe2c278a5b1",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "reference does not say"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "missing-fact",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 127532,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "9ad2d424-acc6-4f82-b32d-966d05b7711c",
+      "status": "completed",
+      "error": null,
+      "transcript": "What time does the shop open on Sunday?",
+      "response": "The reference does not say.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.05
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 238.35
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 807.67
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 809.71
+        },
+        {
+          "name": "tts_request",
+          "ms": 810.06
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1558.86
+        },
+        {
+          "name": "response_complete",
+          "ms": 1698.14
+        }
+      ],
+      "metrics": {
+        "stt_ms": 233.3,
+        "llm_first_token_ms": 569.32,
+        "tts_first_audio_ms": 748.8,
+        "server_first_audio_ms": 1558.86,
+        "server_complete_ms": 1698.14,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "9fc9391ff136f82937afc1b12c93581fffe1a169b024014b75162fe2c278a5b1",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "required fact",
+            "passed": true,
+            "expected": "reference does not say"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "missing-fact",
+      "task": "knowledge"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 129266,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "f1050b8e-ba01-4383-bb82-dd14bd8cfb69",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.43
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 289.83
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 544.32
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 581.7
+        },
+        {
+          "name": "tts_request",
+          "ms": 582.19
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1445.82
+        },
+        {
+          "name": "response_complete",
+          "ms": 1720.01
+        }
+      ],
+      "metrics": {
+        "stt_ms": 284.4,
+        "llm_first_token_ms": 254.49,
+        "tts_first_audio_ms": 863.63,
+        "server_first_audio_ms": 1445.82,
+        "server_complete_ms": 1720.01,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-notebooks",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 131000,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "d2feb8d1-2c1b-4504-8d58-559c0b9d5eb4",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.02
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 289.51
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 923.34
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 963.0
+        },
+        {
+          "name": "tts_request",
+          "ms": 963.44
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1726.51
+        },
+        {
+          "name": "response_complete",
+          "ms": 1987.97
+        }
+      ],
+      "metrics": {
+        "stt_ms": 284.49,
+        "llm_first_token_ms": 633.83,
+        "tts_first_audio_ms": 763.07,
+        "server_first_audio_ms": 1726.51,
+        "server_complete_ms": 1987.97,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-notebooks",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 133016,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "9a09421b-d106-4d4d-95c9-e08ccbb08104",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.01
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 277.61
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 911.02
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 949.81
+        },
+        {
+          "name": "tts_request",
+          "ms": 950.22
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1752.38
+        },
+        {
+          "name": "response_complete",
+          "ms": 2016.03
+        }
+      ],
+      "metrics": {
+        "stt_ms": 272.6,
+        "llm_first_token_ms": 633.41,
+        "tts_first_audio_ms": 802.16,
+        "server_first_audio_ms": 1752.38,
+        "server_complete_ms": 2016.03,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-notebooks",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 135032,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "c7907ced-a45d-477a-b9cc-0594e03938d4",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.63
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 264.81
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 817.0
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 856.76
+        },
+        {
+          "name": "tts_request",
+          "ms": 857.11
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1641.42
+        },
+        {
+          "name": "response_complete",
+          "ms": 1910.12
+        }
+      ],
+      "metrics": {
+        "stt_ms": 259.18,
+        "llm_first_token_ms": 552.19,
+        "tts_first_audio_ms": 784.31,
+        "server_first_audio_ms": 1641.42,
+        "server_complete_ms": 1910.12,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-notebooks",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 136985,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "7bc79604-caf1-48d9-8f24-dc03a3ebd98d",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "{\"name\":\"Alex Test\",\"quantity\":2,\"item\":\"notebooks\",\"color\":\"blue\",\"delivery_day\":\"Friday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.01
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 289.42
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1080.16
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1108.52
+        },
+        {
+          "name": "tts_request",
+          "ms": 1108.95
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1945.72
+        },
+        {
+          "name": "response_complete",
+          "ms": 2227.08
+        }
+      ],
+      "metrics": {
+        "stt_ms": 284.41,
+        "llm_first_token_ms": 790.74,
+        "tts_first_audio_ms": 836.77,
+        "server_first_audio_ms": 1945.72,
+        "server_complete_ms": 2227.08,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Alex Test"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "2"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "notebooks"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "blue"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Friday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-notebooks",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 139235,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "18904f70-a1b6-48f9-8cee-ffc3af4800c4",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Sam Lee. Please send three black pens on Monday.",
+      "response": "{\"name\":\"Sam Lee\",\"quantity\":3,\"item\":\"pens\",\"color\":\"black\",\"delivery_day\":\"Monday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.08
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 267.27
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 913.61
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 939.77
+        },
+        {
+          "name": "tts_request",
+          "ms": 940.17
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1671.78
+        },
+        {
+          "name": "response_complete",
+          "ms": 1955.82
+        }
+      ],
+      "metrics": {
+        "stt_ms": 262.19,
+        "llm_first_token_ms": 646.34,
+        "tts_first_audio_ms": 731.61,
+        "server_first_audio_ms": 1671.78,
+        "server_complete_ms": 1955.82,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "689b1aca9d0e901c1e9bf403f15ff9df59f161d25cb40f95eb8892c99e16bddd",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Sam Lee"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "3"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "pens"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "black"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Monday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-pens",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 141219,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "d4744078-107b-48f3-a536-3fa4d86c02b9",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Sam Lee. Please send three black pens on Monday.",
+      "response": "{\"name\":\"Sam Lee\",\"quantity\":3,\"item\":\"pens\",\"color\":\"black\",\"delivery_day\":\"Monday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 10.28
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 284.79
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 766.59
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 791.19
+        },
+        {
+          "name": "tts_request",
+          "ms": 791.58
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1578.29
+        },
+        {
+          "name": "response_complete",
+          "ms": 1846.28
+        }
+      ],
+      "metrics": {
+        "stt_ms": 274.51,
+        "llm_first_token_ms": 481.8,
+        "tts_first_audio_ms": 786.71,
+        "server_first_audio_ms": 1578.29,
+        "server_complete_ms": 1846.28,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "689b1aca9d0e901c1e9bf403f15ff9df59f161d25cb40f95eb8892c99e16bddd",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Sam Lee"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "3"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "pens"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "black"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Monday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-pens",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 143078,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "e8e05720-1640-4549-8ef2-5442379aa29e",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Sam Lee. Please send three black pens on Monday.",
+      "response": "{\"name\":\"Sam Lee\",\"quantity\":3,\"item\":\"pens\",\"color\":\"black\",\"delivery_day\":\"Monday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.11
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 299.36
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 811.94
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 838.1
+        },
+        {
+          "name": "tts_request",
+          "ms": 838.43
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1665.93
+        },
+        {
+          "name": "response_complete",
+          "ms": 1944.96
+        }
+      ],
+      "metrics": {
+        "stt_ms": 294.25,
+        "llm_first_token_ms": 512.58,
+        "tts_first_audio_ms": 827.5,
+        "server_first_audio_ms": 1665.93,
+        "server_complete_ms": 1944.96,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "689b1aca9d0e901c1e9bf403f15ff9df59f161d25cb40f95eb8892c99e16bddd",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Sam Lee"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "3"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "pens"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "black"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Monday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-pens",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 145063,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "fe110e0a-cac6-4c0b-b5fe-a432a49db2d1",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Sam Lee. Please send three black pens on Monday.",
+      "response": "{\"name\":\"Sam Lee\",\"quantity\":3,\"item\":\"pens\",\"color\":\"black\",\"delivery_day\":\"Monday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.23
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 426.06
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 984.28
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1013.61
+        },
+        {
+          "name": "tts_request",
+          "ms": 1013.94
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1812.14
+        },
+        {
+          "name": "response_complete",
+          "ms": 2111.77
+        }
+      ],
+      "metrics": {
+        "stt_ms": 420.83,
+        "llm_first_token_ms": 558.22,
+        "tts_first_audio_ms": 798.2,
+        "server_first_audio_ms": 1812.14,
+        "server_complete_ms": 2111.77,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "689b1aca9d0e901c1e9bf403f15ff9df59f161d25cb40f95eb8892c99e16bddd",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Sam Lee"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "3"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "pens"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "black"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Monday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-pens",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 147188,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "e561ec7a-dbf0-45ef-95be-7a8ac3ba1f67",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Sam Lee. Please send three black pens on Monday.",
+      "response": "{\"name\":\"Sam Lee\",\"quantity\":3,\"item\":\"pens\",\"color\":\"black\",\"delivery_day\":\"Monday\"}",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.76
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 265.71
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 789.14
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 816.75
+        },
+        {
+          "name": "tts_request",
+          "ms": 817.08
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1689.09
+        },
+        {
+          "name": "response_complete",
+          "ms": 1959.96
+        }
+      ],
+      "metrics": {
+        "stt_ms": 259.95,
+        "llm_first_token_ms": 523.43,
+        "tts_first_audio_ms": 872.01,
+        "server_first_audio_ms": 1689.09,
+        "server_complete_ms": 1959.96,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "689b1aca9d0e901c1e9bf403f15ff9df59f161d25cb40f95eb8892c99e16bddd",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "field: name",
+            "passed": true,
+            "expected": "Sam Lee"
+          },
+          {
+            "check": "field: quantity",
+            "passed": true,
+            "expected": "3"
+          },
+          {
+            "check": "field: item",
+            "passed": true,
+            "expected": "pens"
+          },
+          {
+            "check": "field: color",
+            "passed": true,
+            "expected": "black"
+          },
+          {
+            "check": "field: delivery_day",
+            "passed": true,
+            "expected": "Monday"
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "extract-pens",
+      "task": "extraction"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 149172,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "a9c9470b-ccd2-4dbf-8fbe-e21d50406cc0",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "Simulation only: the refund request for 150 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 8.3
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 260.63
+        },
+        {
+          "name": "tool_result",
+          "ms": 832.14,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.005
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 832.37
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1092.51
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1092.53
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1111.58
+        },
+        {
+          "name": "tts_request",
+          "ms": 1112.05
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2358.51
+        },
+        {
+          "name": "tts_request",
+          "ms": 2630.15
+        },
+        {
+          "name": "response_complete",
+          "ms": 3575.52
+        }
+      ],
+      "metrics": {
+        "stt_ms": 252.33,
+        "llm_first_token_ms": 831.88,
+        "tts_first_audio_ms": 1246.46,
+        "server_first_audio_ms": 2358.51,
+        "server_complete_ms": 3575.52,
+        "tool_overhead_ms": 0.005
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.005
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "evaluation": {
+        "status": "fail",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": false,
+            "expected": {
+              "action": "refund",
+              "amount": 150.0,
+              "status": "blocked"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-over-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 152750,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "a138ff80-22ac-4628-923f-821940b50174",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "Simulation only: the refund request for 150 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.06
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 482.78
+        },
+        {
+          "name": "tool_result",
+          "ms": 1580.23,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1580.45
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1856.71
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1856.73
+        },
+        {
+          "name": "tts_request",
+          "ms": 1857.58
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1884.66
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2705.83
+        },
+        {
+          "name": "tts_request",
+          "ms": 2908.16
+        },
+        {
+          "name": "response_complete",
+          "ms": 3857.72
+        }
+      ],
+      "metrics": {
+        "stt_ms": 476.72,
+        "llm_first_token_ms": 1373.93,
+        "tts_first_audio_ms": 848.25,
+        "server_first_audio_ms": 2705.83,
+        "server_complete_ms": 3857.72,
+        "tool_overhead_ms": 0.003
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "evaluation": {
+        "status": "fail",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": false,
+            "expected": {
+              "action": "refund",
+              "amount": 150.0,
+              "status": "blocked"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-over-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 156641,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "d76f7d95-bce5-4df8-a2db-027df6f1cc6c",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "Simulation only: the refund request for 150 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.04
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 258.2
+        },
+        {
+          "name": "tool_result",
+          "ms": 837.92,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.002
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 838.11
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1318.41
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1318.43
+        },
+        {
+          "name": "tts_request",
+          "ms": 1319.87
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1334.09
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2725.09
+        },
+        {
+          "name": "tts_request",
+          "ms": 2930.16
+        },
+        {
+          "name": "response_complete",
+          "ms": 3891.02
+        }
+      ],
+      "metrics": {
+        "stt_ms": 253.16,
+        "llm_first_token_ms": 1060.21,
+        "tts_first_audio_ms": 1405.22,
+        "server_first_audio_ms": 2725.09,
+        "server_complete_ms": 3891.02,
+        "tool_overhead_ms": 0.002
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.002
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "evaluation": {
+        "status": "fail",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": false,
+            "expected": {
+              "action": "refund",
+              "amount": 150.0,
+              "status": "blocked"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-over-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 160547,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "3575d643-78bd-455d-bf3d-3eefea2a55e7",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "The refund request was blocked by the sandbox policy. No real action occurred.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.82
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 275.85
+        },
+        {
+          "name": "tool_result",
+          "ms": 831.93,
+          "status": "blocked",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "reason": "Action must be allowed and its amount must be within the configured policy limit.",
+          "policy_enforced": true,
+          "overhead_ms": 0.01
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 832.35
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1224.7
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1224.72
+        },
+        {
+          "name": "tts_request",
+          "ms": 1225.18
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1252.51
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2249.6
+        },
+        {
+          "name": "tts_request",
+          "ms": 2437.15
+        },
+        {
+          "name": "response_complete",
+          "ms": 3521.53
+        }
+      ],
+      "metrics": {
+        "stt_ms": 270.03,
+        "llm_first_token_ms": 948.85,
+        "tts_first_audio_ms": 1024.42,
+        "server_first_audio_ms": 2249.6,
+        "server_complete_ms": 3521.53,
+        "tool_overhead_ms": 0.01
+      },
+      "tools": [
+        {
+          "status": "blocked",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "reason": "Action must be allowed and its amount must be within the configured policy limit.",
+          "policy_enforced": true,
+          "overhead_ms": 0.01
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": true,
+            "expected": {
+              "action": "refund",
+              "amount": 150.0,
+              "status": "blocked"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-over-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 164078,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "05b63c35-a1fc-447c-a620-62eaed7cb80a",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 150 units.",
+      "response": "Simulation only: the refund request for 150 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.11
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 259.29
+        },
+        {
+          "name": "tool_result",
+          "ms": 1124.13,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1124.32
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1523.08
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1523.1
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1536.35
+        },
+        {
+          "name": "tts_request",
+          "ms": 1536.89
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2288.59
+        },
+        {
+          "name": "tts_request",
+          "ms": 2480.25
+        },
+        {
+          "name": "response_complete",
+          "ms": 3431.14
+        }
+      ],
+      "metrics": {
+        "stt_ms": 254.18,
+        "llm_first_token_ms": 1263.79,
+        "tts_first_audio_ms": 751.7,
+        "server_first_audio_ms": 2288.59,
+        "server_complete_ms": 3431.14,
+        "tool_overhead_ms": 0.003
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 150,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        }
+      ],
+      "audio_sha256": "daf54608a6996af679493ac37bae89dc288e31e5a959944fbb7ddf0afb5cd4c0",
+      "evaluation": {
+        "status": "fail",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": false,
+            "expected": {
+              "action": "refund",
+              "amount": 150.0,
+              "status": "blocked"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-over-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "audio_buffered",
+      "position": 1,
+      "phase": "measured",
+      "server_uptime_ms": 167547,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "a4c4af6d-3f74-4bd9-ba48-722334afe794",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 50 units.",
+      "response": "Simulation only: the refund request for 50 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.5
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 3345.78
+        },
+        {
+          "name": "tool_result",
+          "ms": 4291.68,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 4291.92
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 4744.61
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 4744.64
+        },
+        {
+          "name": "tts_request",
+          "ms": 4745.48
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 4758.49
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 5927.92
+        },
+        {
+          "name": "tts_request",
+          "ms": 6152.28
+        },
+        {
+          "name": "response_complete",
+          "ms": 7132.72
+        }
+      ],
+      "metrics": {
+        "stt_ms": 3338.28,
+        "llm_first_token_ms": 1398.83,
+        "tts_first_audio_ms": 1182.44,
+        "server_first_audio_ms": 5927.92,
+        "server_complete_ms": 7132.72,
+        "tool_overhead_ms": 0.003
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        }
+      ],
+      "audio_sha256": "587ecfcb5ff12600aa02e4eb8f0ff5a722748fdd9e8ce9dc8000f9474a3041a4",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": true,
+            "expected": {
+              "action": "refund",
+              "amount": 50.0,
+              "status": "simulated"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-within-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "streaming",
+      "position": 2,
+      "phase": "measured",
+      "server_uptime_ms": 174719,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "2cdca508-a816-4a1e-95cc-fc7e735738f6",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 50 units.",
+      "response": "Simulation only: the refund request for 50 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.26
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 418.81
+        },
+        {
+          "name": "tool_result",
+          "ms": 778.19,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 778.39
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1380.29
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1380.31
+        },
+        {
+          "name": "tts_request",
+          "ms": 1380.78
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1392.16
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2146.31
+        },
+        {
+          "name": "tts_request",
+          "ms": 2356.8
+        },
+        {
+          "name": "response_complete",
+          "ms": 3360.59
+        }
+      ],
+      "metrics": {
+        "stt_ms": 412.55,
+        "llm_first_token_ms": 961.48,
+        "tts_first_audio_ms": 765.53,
+        "server_first_audio_ms": 2146.31,
+        "server_complete_ms": 3360.59,
+        "tool_overhead_ms": 0.003
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        }
+      ],
+      "audio_sha256": "587ecfcb5ff12600aa02e4eb8f0ff5a722748fdd9e8ce9dc8000f9474a3041a4",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": true,
+            "expected": {
+              "action": "refund",
+              "amount": 50.0,
+              "status": "simulated"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-within-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "guarded",
+      "position": 3,
+      "phase": "measured",
+      "server_uptime_ms": 178094,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "b550fcf9-22e4-470e-8db3-e10563f39123",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 50 units.",
+      "response": "Simulation only: the refund request for 50 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.37
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 254.13
+        },
+        {
+          "name": "tool_result",
+          "ms": 588.92,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": true,
+          "overhead_ms": 0.009
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 589.44
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1110.96
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1110.98
+        },
+        {
+          "name": "tts_request",
+          "ms": 1112.44
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1134.25
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1935.65
+        },
+        {
+          "name": "tts_request",
+          "ms": 2154.99
+        },
+        {
+          "name": "response_complete",
+          "ms": 3109.5
+        }
+      ],
+      "metrics": {
+        "stt_ms": 248.76,
+        "llm_first_token_ms": 856.83,
+        "tts_first_audio_ms": 823.21,
+        "server_first_audio_ms": 1935.65,
+        "server_complete_ms": 3109.5,
+        "tool_overhead_ms": 0.009
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": true,
+          "overhead_ms": 0.009
+        }
+      ],
+      "audio_sha256": "587ecfcb5ff12600aa02e4eb8f0ff5a722748fdd9e8ce9dc8000f9474a3041a4",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": true,
+            "expected": {
+              "action": "refund",
+              "amount": 50.0,
+              "status": "simulated"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-within-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "buffered",
+      "position": 4,
+      "phase": "measured",
+      "server_uptime_ms": 181203,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "9688dc39-a7a6-4607-b3d3-ac7987fdf2a7",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 50 units.",
+      "response": "Simulation only: the refund request for 50 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.07
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 271.95
+        },
+        {
+          "name": "tool_result",
+          "ms": 1309.44,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.002
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1309.68
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1688.55
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 1688.59
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1706.11
+        },
+        {
+          "name": "tts_request",
+          "ms": 1706.57
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2447.87
+        },
+        {
+          "name": "tts_request",
+          "ms": 2671.95
+        },
+        {
+          "name": "response_complete",
+          "ms": 3779.45
+        }
+      ],
+      "metrics": {
+        "stt_ms": 265.88,
+        "llm_first_token_ms": 1416.6,
+        "tts_first_audio_ms": 741.3,
+        "server_first_audio_ms": 2447.87,
+        "server_complete_ms": 3779.45,
+        "tool_overhead_ms": 0.002
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.002
+        }
+      ],
+      "audio_sha256": "587ecfcb5ff12600aa02e4eb8f0ff5a722748fdd9e8ce9dc8000f9474a3041a4",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": true,
+            "expected": {
+              "action": "refund",
+              "amount": 50.0,
+              "status": "simulated"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": true,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-within-limit",
+      "task": "action"
+    },
+    {
+      "type": "result",
+      "trial": 1,
+      "mode": "text_buffered",
+      "position": 5,
+      "phase": "measured",
+      "server_uptime_ms": 185016,
+      "provider_warm_state": "uncontrolled",
+      "trace_id": "bb261198-5baf-4a2a-b5a2-bd0ca8a3c168",
+      "status": "completed",
+      "error": null,
+      "transcript": "Simulate a refund of 50 units.",
+      "response": "Simulation only: the refund request for 50 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.16
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 264.0
+        },
+        {
+          "name": "tool_result",
+          "ms": 457.65,
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 457.86
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 875.52
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 875.55
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 886.54
+        },
+        {
+          "name": "tts_request",
+          "ms": 886.96
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1739.63
+        },
+        {
+          "name": "tts_request",
+          "ms": 1951.77
+        },
+        {
+          "name": "response_complete",
+          "ms": 2913.09
+        }
+      ],
+      "metrics": {
+        "stt_ms": 258.84,
+        "llm_first_token_ms": 611.52,
+        "tts_first_audio_ms": 852.67,
+        "server_first_audio_ms": 1739.63,
+        "server_complete_ms": 2913.09,
+        "tool_overhead_ms": 0.003
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "refund",
+          "amount": 50,
+          "external_effect": false,
+          "policy_enforced": false,
+          "overhead_ms": 0.003
+        }
+      ],
+      "audio_sha256": "587ecfcb5ff12600aa02e4eb8f0ff5a722748fdd9e8ce9dc8000f9474a3041a4",
+      "evaluation": {
+        "status": "pass",
+        "checks": [
+          {
+            "check": "tool outcome",
+            "passed": true,
+            "expected": {
+              "action": "refund",
+              "amount": 50.0,
+              "status": "simulated"
+            }
+          }
+        ],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": true,
+        "buffer_audio": false,
+        "policy_enforced": false,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "case_id": "policy-within-limit",
+      "task": "action"
+    }
+  ],
+  "measurement": "Server-only observed clocks; no browser playback or acoustic measurement",
+  "selected_cases": [
+    "explain-rainbow",
+    "order-tea",
+    "returns-policy",
+    "missing-fact",
+    "extract-notebooks",
+    "extract-pens",
+    "policy-over-limit",
+    "policy-within-limit"
+  ],
+  "ended_at": "2026-10-29T20:04:23.064345+00:00"
+}

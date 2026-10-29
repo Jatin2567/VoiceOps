@@ -97,3 +97,35 @@ def test_schedule_rotates_and_configuration_is_bounded():
         ExperimentSpec(action_limit=float("nan"))
     assert len(ExperimentSpec(repeats=30, warmup=True).schedule()) == 93
     assert ExperimentSpec(order_offset=1).schedule()[0] == (1, "streaming")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("mode,amount,status", [("streaming", 50, "simulated"), ("guarded", 150, "blocked"), ("buffered", 50, "simulated")])
+async def test_spoken_confirmation_uses_verified_outcome(mode, amount, status, monkeypatch):
+    from types import SimpleNamespace
+    monkeypatch.setenv("GROQ_API_KEY", "test")
+    spoken = []
+    async def stt(service, audio):
+        yield TranscriptionFrame("Reserve the order", "user", "")
+    async def llm(service, context):
+        await service.push_frame(LLMFullResponseStartFrame())
+        await service.push_frame(LLMTextFrame("Your real delivery is confirmed. "))
+        async def callback(result):
+            assert result["status"] == status
+        await service._functions["sandbox_action"].handler(SimpleNamespace(arguments={"action": "reserve", "amount": amount}, result_callback=callback))
+        await service.push_frame(LLMTextFrame("It will be delivered Friday. "))
+        await service.push_frame(LLMTextFrame("Your card has been charged."))
+        await service.push_frame(LLMFullResponseEndFrame())
+    async def tts(service, text, context_id):
+        spoken.append(text)
+        yield TTSStartedFrame(context_id=context_id)
+        yield TTSAudioRawFrame(audio=b"\x01\x00" * 1600, sample_rate=16000, num_channels=1, context_id=context_id)
+        yield TTSStoppedFrame(context_id=context_id)
+    with patch.object(RecordedGroqSTTService, "run_stt", stt), patch.object(GroqLLMService, "_process_context", llm), patch.object(EdgeTTSService, "run_tts", tts):
+        result = await run_architecture(ExperimentSpec(task="action"), mode, wav(), lambda p: None)
+    assert result["status"] == "completed", result
+    speech = " ".join(spoken)
+    assert "Friday" not in speech and "charged" not in speech and "real delivery is confirmed" not in speech
+    assert "No real" in speech
+    assert ("blocked" if status == "blocked" else "Simulation only") in speech
+    assert result["response"].split() == speech.split()

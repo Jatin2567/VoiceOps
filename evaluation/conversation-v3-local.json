@@ -1,0 +1,407 @@
+{
+  "scope": "Prerecorded voice with live providers; no physical microphone or acoustic measurement",
+  "turns": [
+    {
+      "type": "result",
+      "trace_id": "0dda6b20-aee7-4139-b067-addecb4e8bd9",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 103.38
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 546.66
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1410.4
+        },
+        {
+          "name": "tts_request",
+          "ms": 1433.71
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1518.94
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2399.13
+        },
+        {
+          "name": "tts_request",
+          "ms": 2576.2
+        },
+        {
+          "name": "tts_request",
+          "ms": 3569.93
+        },
+        {
+          "name": "response_complete",
+          "ms": 4593.04
+        }
+      ],
+      "metrics": {
+        "stt_ms": 443.28,
+        "llm_first_token_ms": 863.74,
+        "tts_first_audio_ms": 965.42,
+        "server_first_audio_ms": 2399.13,
+        "server_complete_ms": 4593.04,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 1,
+      "utterance_id": "live-1",
+      "audio_packets": 219
+    },
+    {
+      "type": "result",
+      "trace_id": "e510467b-3c9c-4eae-971c-3713b9015c45",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Can you explain that in simpler words?",
+      "response": "Sunlight bends when it hits a water droplet.  \nIt bounces inside the droplet and bends again when it leaves.  \nThat bending splits the light into all the colors of a rainbow.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 5.79
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 260.65
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 762.79
+        },
+        {
+          "name": "tts_request",
+          "ms": 774.93
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 808.48
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1583.12
+        },
+        {
+          "name": "tts_request",
+          "ms": 1759.58
+        },
+        {
+          "name": "tts_request",
+          "ms": 2733.31
+        },
+        {
+          "name": "response_complete",
+          "ms": 3787.08
+        }
+      ],
+      "metrics": {
+        "stt_ms": 254.86,
+        "llm_first_token_ms": 502.14,
+        "tts_first_audio_ms": 808.19,
+        "server_first_audio_ms": 1583.12,
+        "server_complete_ms": 3787.08,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "ad5f7acb8bf40faa1d88fd48e1f6c7b49e25abe2b6a37ea3c6492809f71494e1",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 2,
+      "utterance_id": "live-2",
+      "audio_packets": 138
+    },
+    {
+      "type": "result",
+      "trace_id": "5cacc7ef-6c94-448c-99c0-4d56c2d21919",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Can you explain that in simpler words?",
+      "response": "Sure! Sunlight hits tiny water droplets in the air.  \nIt bends and bounces inside each droplet, then bends again when it leaves.  \nThat bending splits the light into all the colors we see as a rainbow.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.76
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 270.06
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 711.91
+        },
+        {
+          "name": "tts_request",
+          "ms": 713.52
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 776.74
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1510.92
+        },
+        {
+          "name": "tts_request",
+          "ms": 1640.67
+        },
+        {
+          "name": "tts_request",
+          "ms": 3069.47
+        },
+        {
+          "name": "tts_request",
+          "ms": 4718.99
+        },
+        {
+          "name": "response_complete",
+          "ms": 6176.87
+        }
+      ],
+      "metrics": {
+        "stt_ms": 262.3,
+        "llm_first_token_ms": 441.85,
+        "tts_first_audio_ms": 797.4,
+        "server_first_audio_ms": 1510.92,
+        "server_complete_ms": 6176.87,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "ad5f7acb8bf40faa1d88fd48e1f6c7b49e25abe2b6a37ea3c6492809f71494e1",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 4,
+      "utterance_id": "live-4",
+      "audio_packets": 185
+    },
+    {
+      "type": "result",
+      "trace_id": "587706bc-cd0b-416d-873c-f272eb34ef5c",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "Simulation only: the reserve request for 2 units passed the sandbox checks. No real booking, payment, cancellation or delivery was made.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.64
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 273.33
+        },
+        {
+          "name": "tool_result",
+          "ms": 940.12,
+          "status": "simulated",
+          "action": "reserve",
+          "amount": 2,
+          "external_effect": false,
+          "policy_enforced": true,
+          "overhead_ms": 0.007
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 940.36
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 2321.18
+        },
+        {
+          "name": "verified_confirmation",
+          "ms": 2321.21
+        },
+        {
+          "name": "tts_request",
+          "ms": 2322.18
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 2361.68
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 3925.94
+        },
+        {
+          "name": "tts_request",
+          "ms": 4121.88
+        },
+        {
+          "name": "response_complete",
+          "ms": 5527.76
+        }
+      ],
+      "metrics": {
+        "stt_ms": 266.69,
+        "llm_first_token_ms": 2047.85,
+        "tts_first_audio_ms": 1603.76,
+        "server_first_audio_ms": 3925.94,
+        "server_complete_ms": 5527.76,
+        "tool_overhead_ms": 0.007
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "reserve",
+          "amount": 2,
+          "external_effect": false,
+          "policy_enforced": true,
+          "overhead_ms": 0.007
+        }
+      ],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true,
+        "action_confirmation": "verified tool outcome template"
+      },
+      "runtime": {
+        "commit": "working-tree-release-v3",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 5,
+      "utterance_id": "live-5",
+      "audio_packets": 126
+    }
+  ],
+  "interruption_phase": "after first PCM packet",
+  "cancelled_audio_packets": 29,
+  "cancellation_ack_ms": 11
+}

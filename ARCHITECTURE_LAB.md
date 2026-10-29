@@ -32,12 +32,12 @@ Paired effects match input SHA-256 and repetition. Percentile bootstrap interval
 and require at least five pairs. They describe repeated trials on this input, not a population of speakers
 or tasks. Network variation, provider load and caching remain uncontrolled; no universal speedup is claimed.
 
-Tasks support required/forbidden facts (normalized literal matching), exact JSON field values, optional
+Tasks support required/forbidden facts (whole-token quantities and conservative clause-local negation checks), exact JSON field values, optional
 substring matching and action/amount/outcome checks that must match the same tool call. These checks test
-supplied criteria, not semantic truth. Each response shows pass/fail/unscored alongside latency. An
+supplied criteria, not semantic truth. `acceptable_facts` accepts groups of alternative phrases; every group must match at least one phrase. “130 days” cannot satisfy “30 days”; “thirty days” can. Negation uses a bounded token window and can produce false positives or false negatives on complex clauses. Each response shows pass/fail/unscored alongside latency. An
 unguarded baseline can deliberately fail a policy criterion while completing its speech pipeline.
 All actions are simulations without external effects. Every mode enforces transport validation;
-guarded mode additionally checks the action allowlist and amount cap.
+guarded mode additionally checks the action allowlist and amount cap. After a tool result, a deterministic outcome template replaces model narration before TTS and in exported response text. Explicit action tasks suppress pre-tool prose. UI outcome cards say Simulation only. This does not establish factual correctness for ordinary, non-tool conversation.
 
 ## Measurement boundaries
 
@@ -121,11 +121,12 @@ Atomic reservation at experiment/turn start is authoritative. Daily and 10-minut
 
 `/conversation/ws` supports one configured session, up to 32 utterances, with two-minute idle timeout.
 It shares the two-session capacity and atomic budget with the lab. The server retains at most six
-completed exchanges; cancelled turns are omitted. Microphone capture continues during generation
+exchanges. Recognized user questions survive interruption; the interrupted assistant reply is replaced by a context marker so unheard output is not treated as delivered. Microphone capture continues during generation
 and playback. After 220 ms of detected speech the browser clears its scheduled sources and requests
-server cancellation; an 800 ms pause sends the next utterance. Echo cancellation plus headphones
+server cancellation; an 800 ms pause sends the next utterance. Client-generated `utterance_id` values exist before server acknowledgement and are echoed on every turn event. Cancelled IDs reject late acknowledgement/audio/result packets. Stale cancellation cannot stop a newer turn. Legacy clients can still cancel using the acknowledged server turn ID. Echo cancellation plus headphones
 helps avoid false interrupts, but physical-device accuracy has not been established by synthetic tests.
 The Stop reply button provides explicit cancellation. Ending a session releases audio and microphone.
+Sound check offers microphone selection, a live input meter, a local 15-second recording check, a speaker tone and permission recovery guidance. Tests stay on the device; conversation speech uses the configured providers. Navigation, tab hiding and ending a session release device resources.
 No conversation is persisted to report storage. Debug provider logs may contain transcript content.
 
 ## Varied evaluation suite
@@ -133,6 +134,7 @@ No conversation is persisted to report storage. Debug provider logs may contain 
 `frontend/lab/suite-v1.json` versions eight requests across four tasks, including missing reference
 information, different extraction values and policy actions on either side of the limit. Browser suite
 runs group results by task and architecture, retain partial results and export the manifest and raw runs.
+Suite and comparison reports share opt-in browser history. JSON import is limited to 5 MB, validates trial structure and strips audio URLs. Release comparison matches case, input hash, task settings, providers and architecture configuration; it shows medians, measured counts, failures and criteria outcomes. Missing/incompatible trials are explicitly excluded. Old charts clear when a new run starts, and active checks appear before submission.
 Suite timing is server-only and does not play reply audio. Each case uses identical audio hashes across
 paths. Unguarded paths may fail a supplied policy requirement by design. A failed literal wording check
 does not necessarily mean a factually incorrect response; inspect the exported response and checks.
@@ -142,3 +144,8 @@ same suite through the CLI. Optional `--cases` selects explicit cases; reports i
 Run `python scripts/test_conversation.py --url wss://voiceops-s2e4.onrender.com/conversation/ws`
 for prerecorded follow-up, cancellation and next-turn recovery acceptance. Neither test measures a
 physical microphone or acoustic mouth-to-ear latency. Start-rate limits may require spacing live runs.
+
+## Acceptance evidence for the conversation reliability release
+
+`evaluation/reliability-v3-local.json` records all eight cases across five architectures.
+`evaluation/conversation-v3-local.json` records live transcription and speech, cancellation after first PCM, a contextual follow-up and an explicitly simulated reservation. Synthetic recordings do not establish physical microphone, echo or acoustic latency performance. The public test script asserts that the follow-up retains the interrupted topic and the action response explicitly disclaims real effects.

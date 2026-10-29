@@ -56,15 +56,27 @@ class Observation:
 
 
 class TextGate(FrameProcessor):
-    def __init__(self, observation, buffered):
+    def __init__(self, observation, buffered, action_expected=False):
         super().__init__()
         self.o, self.buffered, self.parts = observation, buffered, []
+        self.confirmed = False
+        self.action_expected = action_expected
 
     async def process_frame(self, frame, direction):
         await super().process_frame(frame, direction)
         if isinstance(frame, LLMTextFrame):
             if "llm_first_token" not in self.o.first:
                 self.o.mark("llm_first_token")
+            if self.action_expected and not self.o.tools:
+                return
+            if self.o.tools:
+                # Only verified tool outcomes may describe an action. The model's
+                # post-tool prose never reaches speech synthesis or the report.
+                if self.confirmed:
+                    return
+                self.confirmed = True
+                frame = LLMTextFrame(" ".join(action_confirmation(t) for t in self.o.tools))
+                self.o.mark("verified_confirmation")
             self.o.text.append(frame.text)
             if self.buffered:
                 self.parts.append(frame.text)
@@ -87,6 +99,7 @@ class STTProbe(FrameProcessor):
         if isinstance(frame, TranscriptionFrame):
             self.o.transcript = frame.text
             self.o.mark("transcript_ready")
+            self.o.emit({"type": "transcript", "text": frame.text})
         await self.push_frame(frame, direction)
 
 
@@ -118,6 +131,13 @@ class OutputProbe(FrameProcessor):
             self.o.mark("response_complete")
             self.o.done.set()
         await self.push_frame(frame, direction)
+
+
+def action_confirmation(result):
+    action = result["action"]
+    if result["status"] == "blocked":
+        return f"The {action} request was blocked by the sandbox policy. No real action occurred."
+    return f"Simulation only: the {action} request for {result['amount']:g} units passed the sandbox checks. No real booking, payment, cancellation or delivery was made."
 
 
 async def sandbox_action(spec, mode, arguments, observation):
@@ -186,7 +206,7 @@ async def run_architecture(spec, mode, audio, emit, history=None):
     buffer_text = mode in ("buffered", "text_buffered")
     buffer_audio = mode in ("buffered", "audio_buffered")
     pipeline = Pipeline([stt, STTProbe(o), TranscriptToContext(context), llm,
-        TextGate(o, buffer_text), LabSpeech(o), OutputProbe(o, buffer_audio), LLMAssistantAggregator(context)])
+        TextGate(o, buffer_text, action_expected=spec.task == "action"), LabSpeech(o), OutputProbe(o, buffer_audio), LLMAssistantAggregator(context)])
     task = PipelineTask(pipeline, enable_rtvi=False, cancel_timeout_secs=2,
                         setup_timeout_secs=5, start_timeout_secs=5)
     runner = PipelineRunner(handle_sigint=False, handle_sigterm=False)
@@ -246,7 +266,8 @@ async def run_architecture(spec, mode, audio, emit, history=None):
             "tool_overhead_ms": round(sum(t["overhead_ms"] for t in o.tools), 3)},
         "tools": o.tools, "audio_sha256": hashlib.sha256(audio).hexdigest(),
         "evaluation": evaluate(spec, answer, o.tools),
-        "configuration": {"buffer_text": buffer_text, "buffer_audio": buffer_audio, "policy_enforced": mode == "guarded"},
+        "configuration": {"buffer_text": buffer_text, "buffer_audio": buffer_audio, "policy_enforced": mode == "guarded",
+                          "action_confirmation": "verified tool outcome template"},
         "runtime": {"commit": os.getenv("RENDER_GIT_COMMIT", os.getenv("VOICEOPS_COMMIT", "local-unversioned")),
                     "python": platform.python_version(), "dependencies": versions, "region": os.getenv("RENDER_REGION", "unknown")},
         "phrase_match": spec.expected_phrase.casefold() in answer.casefold() if spec.expected_phrase else None,

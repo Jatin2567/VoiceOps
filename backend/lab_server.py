@@ -70,32 +70,43 @@ async def conversation(ws: WebSocket):
         return
     active += 1
     work = None
-    history, turns, last_id, last_history_id = [], 0, None, None
+    history, turns, last_id, last_utterance = [], 0, None, None
+    last_user, last_answer = None, None
+    seen_utterances = set()
     try:
         config = await asyncio.wait_for(ws.receive_json(), 20)
         spec = ExperimentSpec.model_validate({**config.get("spec", {}), "modes": ["guarded"], "repeats": 1, "warmup": False})
         await ws.send_json({"type": "ready", "max_turns": 32})
 
-        async def reply(audio, turn_id):
-            nonlocal last_history_id
+        async def reply(audio, turn_id, utterance_id):
+            nonlocal last_user, last_answer
+            prior_history = list(history)
             queue = asyncio.Queue(maxsize=2400)
+            def observe(packet):
+                nonlocal last_user
+                if packet.get("type") == "transcript" and last_user is None:
+                    last_user = {"role": "user", "content": str(packet["text"])[:4000]}
+                    history.append(last_user)
+                queue.put_nowait(packet)
             async def send():
                 while True:
                     packet = await queue.get()
                     try:
-                        await ws.send_json({**packet, "turn_id": turn_id})
+                        await ws.send_json({**packet, "turn_id": turn_id, "utterance_id": utterance_id})
                     finally:
                         queue.task_done()
             sender = asyncio.create_task(send())
             try:
-                result = await run_architecture(spec, "guarded", audio, queue.put_nowait, history=list(history))
+                result = await run_architecture(spec, "guarded", audio, observe, history=prior_history)
                 await asyncio.wait_for(queue.join(), 15)
-                await ws.send_json({"type": "result", **result, "turn_id": turn_id})
+                await ws.send_json({"type": "result", **result, "turn_id": turn_id, "utterance_id": utterance_id})
                 if result["status"] == "completed":
-                    history.extend([{"role": "user", "content": result["transcript"][:4000]},
-                                    {"role": "assistant", "content": result["response"][:6000]}])
+                    if last_user is None:
+                        last_user = {"role": "user", "content": result["transcript"][:4000]}
+                        history.append(last_user)
+                    last_answer = {"role": "assistant", "content": result["response"][:6000]}
+                    history.append(last_answer)
                     del history[:-12]
-                    last_history_id = turn_id
             finally:
                 sender.cancel()
                 with suppress(asyncio.CancelledError):
@@ -104,15 +115,23 @@ async def conversation(ws: WebSocket):
         while True:
             message = await asyncio.wait_for(ws.receive_json(), 120)
             if message.get("type") == "interrupt":
+                matches = (message.get("utterance_id") == last_utterance if message.get("utterance_id")
+                           else message.get("turn_id") == last_id)
+                if last_id is None or not matches:
+                    await ws.send_json({"type": "interrupt_ignored", "utterance_id": message.get("utterance_id")})
+                    continue
                 if work and not work.done():
                     work.cancel()
                     with suppress(asyncio.CancelledError):
                         await work
-                # An interrupted reply is excluded from the next turn's context.
-                if message.get("turn_id") == last_history_id and history:
-                    del history[-2:]
-                    last_history_id = None
-                await ws.send_json({"type": "interrupted", "turn_id": last_id})
+                # Keep the recognized question; never treat unheard speech as heard.
+                marker = "[The assistant reply was interrupted. The user may not have heard it. Answer the user's follow-up using their preceding request.]"
+                if last_answer is not None:
+                    last_answer["content"] = marker
+                elif last_user is not None:
+                    history.append({"role": "assistant", "content": marker})
+                del history[:-12]
+                await ws.send_json({"type": "interrupted", "turn_id": last_id, "utterance_id": last_utterance})
                 last_id = None
                 continue
             if message.get("type") != "audio":
@@ -128,11 +147,17 @@ async def conversation(ws: WebSocket):
                 raise ValueError("Recording too long")
             audio = base64.b64decode(encoded, validate=True)
             VoiceCalls.validate_audio(audio)
+            utterance_id = message.get("utterance_id", f"legacy-{turns + 1}")
+            if not isinstance(utterance_id, str) or not 1 <= len(utterance_id) <= 80 or utterance_id in seen_utterances:
+                raise ValueError("Invalid or repeated utterance ID")
+            seen_utterances.add(utterance_id)
             quota = usage_budget.reserve(ws.client.host if ws.client else "unknown", 1)
             turns += 1
             last_id = turns
-            await ws.send_json({"type": "turn_start", "turn_id": turns, "quota": quota})
-            work = asyncio.create_task(reply(audio, turns))
+            last_utterance = utterance_id
+            last_user, last_answer = None, None
+            await ws.send_json({"type": "turn_start", "turn_id": turns, "utterance_id": utterance_id, "quota": quota})
+            work = asyncio.create_task(reply(audio, turns, utterance_id))
         if work:
             await work
         await ws.send_json({"type": "complete", "message": "Session limit reached. Start another conversation."})
