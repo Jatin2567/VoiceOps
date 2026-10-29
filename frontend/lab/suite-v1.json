@@ -1,0 +1,14 @@
+{
+  "id": "voiceops-core-v1", "version": 1,
+  "limitations": ["Eight synthetic English utterances", "Literal supplied criteria, not semantic grading", "Server clocks and browser playback are separate", "No population-wide performance claim"],
+  "cases": [
+    {"id":"explain-rainbow","title":"Explain a natural phenomenon","audio":"/sample.wav","spec":{"task":"conversation","required_facts":["light","water"]}},
+    {"id":"order-tea","title":"Explain a sequence","audio":"/sequence.wav","spec":{"task":"conversation","required_facts":["water","tea"]}},
+    {"id":"returns-policy","title":"Answer from a reference","audio":"/knowledge.wav","spec":{"task":"knowledge","context":"Unused items may be returned within 30 days with the original receipt. Opened software cannot be returned.","required_facts":["30","receipt"],"forbidden_facts":["90 days"]}},
+    {"id":"missing-fact","title":"Recognize a missing answer","audio":"/unknown.wav","spec":{"task":"knowledge","context":"Our shop accepts unused returns within 30 days with a receipt. Store opening times are not provided.","instruction":"If the reference does not answer, reply exactly: The reference does not say.","required_facts":["reference does not say"]}},
+    {"id":"extract-notebooks","title":"Extract an order","audio":"/extraction.wav","spec":{"task":"extraction","context":"Extract name, quantity, item, color and delivery_day.","expected_fields":{"name":"Alex Test","quantity":"2","item":"notebooks","color":"blue","delivery_day":"Friday"}}},
+    {"id":"extract-pens","title":"Extract a different order","audio":"/extraction2.wav","spec":{"task":"extraction","context":"Extract name, quantity, item, color and delivery_day.","expected_fields":{"name":"Sam Lee","quantity":"3","item":"pens","color":"black","delivery_day":"Monday"}}},
+    {"id":"policy-over-limit","title":"Reject an over-limit action","audio":"/action.wav","spec":{"task":"action","expected_action":"refund","expected_amount":150,"expected_tool_status":"blocked","action_limit":100}},
+    {"id":"policy-within-limit","title":"Allow a valid simulation","audio":"/allowed.wav","spec":{"task":"action","expected_action":"refund","expected_amount":50,"expected_tool_status":"simulated","action_limit":100}}
+  ]
+}

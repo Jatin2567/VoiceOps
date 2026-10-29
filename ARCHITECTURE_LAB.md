@@ -17,7 +17,7 @@ is one optional example at `/studio/`. This document supersedes the original PRD
 Compare buffered vs full-text/streamed-audio to vary delivery only; buffered vs streamed-text/held-audio
 varies text gating only. Streaming vs guarded varies deterministic checks. Every mode shares recorded-turn
 Groq Whisper, the same LLM, prompt, reference material and tools. There are no injected delays.
-Native speech-to-speech, continuous transcription and full-duplex interruptions are not implemented.
+Native speech-to-speech and continuous transcription are not implemented. The separate Conversation workspace supports detecting speech during a reply, stopping scheduled playback and cancelling active provider work. Each request still uses completed-turn transcription. Headphones are recommended to limit speaker echo.
 
 ## Experiment and statistical contract
 
@@ -97,3 +97,48 @@ Configure GROQ_API_KEY in ignored .env; optional GROQ_WHISPER_MODEL, GROQ_LLM_MO
 Open port 10000 (or PORT). CLI reports contain server measurements only; use the browser for playback
 acceptance tests. Live tests consume quota. The public repo includes controlled-provider lifecycle,
 evaluation, atomic budget, statistics, scheduling-gap and recovery-serialization tests.
+
+## Guided workspace and comparison display
+
+The public UI stays light. Quick demo selects three paths with one trial each; Controlled study
+selects five paths with five measured repetitions and one excluded warm-up each (30 planned trials).
+Guided evaluation controls produce supplied facts, extraction fields, or expected action outcomes.
+Advanced JSON overrides matching guided fields. Each request is still validated on the server.
+
+The comparison chart uses a single server time scale for the latest completed measured trial of
+each path. Transcription spans STT request to transcript; model window spans transcript to the last
+LLM response end; speech window spans first synthesis request to response completion. Windows may
+overlap and the speech window is an observed upper boundary, not a standalone TTS duration.
+First generated PCM is marked separately from browser scheduling. Summary cards include correctness,
+sample counts and observed scheduled playback gaps. Blind replay randomizes labels for locally
+available audio; it is informal listening, not a blinded scientific evaluation. Recovered reports omit audio.
+
+`/api/readiness` reports process availability, key configuration, capacity and an advisory quota
+snapshot without calling providers or reserving usage. It explicitly does not verify provider health.
+Atomic reservation at experiment/turn start is authoritative. Daily and 10-minute start limits apply.
+
+## General conversations
+
+`/conversation/ws` supports one configured session, up to 32 utterances, with two-minute idle timeout.
+It shares the two-session capacity and atomic budget with the lab. The server retains at most six
+completed exchanges; cancelled turns are omitted. Microphone capture continues during generation
+and playback. After 220 ms of detected speech the browser clears its scheduled sources and requests
+server cancellation; an 800 ms pause sends the next utterance. Echo cancellation plus headphones
+helps avoid false interrupts, but physical-device accuracy has not been established by synthetic tests.
+The Stop reply button provides explicit cancellation. Ending a session releases audio and microphone.
+No conversation is persisted to report storage. Debug provider logs may contain transcript content.
+
+## Varied evaluation suite
+
+`frontend/lab/suite-v1.json` versions eight requests across four tasks, including missing reference
+information, different extraction values and policy actions on either side of the limit. Browser suite
+runs group results by task and architecture, retain partial results and export the manifest and raw runs.
+Suite timing is server-only and does not play reply audio. Each case uses identical audio hashes across
+paths. Unguarded paths may fail a supplied policy requirement by design. A failed literal wording check
+does not necessarily mean a factually incorrect response; inspect the exported response and checks.
+
+Run `python scripts/evaluate_suite.py --url wss://voiceops-s2e4.onrender.com/lab/ws` for the
+same suite through the CLI. Optional `--cases` selects explicit cases; reports identify that subset.
+Run `python scripts/test_conversation.py --url wss://voiceops-s2e4.onrender.com/conversation/ws`
+for prerecorded follow-up, cancellation and next-turn recovery acceptance. Neither test measures a
+physical microphone or acoustic mouth-to-ear latency. Start-rate limits may require spacing live runs.

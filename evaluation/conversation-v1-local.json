@@ -1,0 +1,306 @@
+{
+  "scope": "Prerecorded voice with live providers; no physical microphone or acoustic measurement",
+  "turns": [
+    {
+      "type": "result",
+      "trace_id": "332f8486-d596-41f9-b25d-a01565d70f6d",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Explain how a rainbow forms in three short sentences.",
+      "response": "A rainbow forms when sunlight is refracted, or bent, as it enters a water droplet. Inside the droplet, the light is reflected off the back surface and then refracted again as it exits. This double refraction separates the light into its component colors, creating the circular arc we see.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 6.94
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 368.14
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 558.56
+        },
+        {
+          "name": "tts_request",
+          "ms": 582.83
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 659.57
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1531.86
+        },
+        {
+          "name": "tts_request",
+          "ms": 1731.48
+        },
+        {
+          "name": "tts_request",
+          "ms": 2750.87
+        },
+        {
+          "name": "response_complete",
+          "ms": 3741.42
+        }
+      ],
+      "metrics": {
+        "stt_ms": 361.2,
+        "llm_first_token_ms": 190.42,
+        "tts_first_audio_ms": 949.03,
+        "server_first_audio_ms": 1531.86,
+        "server_complete_ms": 3741.42,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "75d2e746206b334d64d1e5d592352116bf4838bb7a99ff76198f0dc5593317f7",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 1,
+      "audio_packets": 224
+    },
+    {
+      "type": "result",
+      "trace_id": "8de43dec-fe27-4978-9297-79ca2b16bd71",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "Can you explain that in simpler words?",
+      "response": "Sunlight bends when it hits a water droplet.  \nIt bounces inside the droplet and bends again when it leaves.  \nThat bending splits the light into all the colors of a rainbow.",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.7
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 290.11
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 443.38
+        },
+        {
+          "name": "tts_request",
+          "ms": 465.07
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 494.74
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 1455.98
+        },
+        {
+          "name": "tts_request",
+          "ms": 1654.73
+        },
+        {
+          "name": "tts_request",
+          "ms": 3165.78
+        },
+        {
+          "name": "response_complete",
+          "ms": 4480.59
+        }
+      ],
+      "metrics": {
+        "stt_ms": 282.41,
+        "llm_first_token_ms": 153.27,
+        "tts_first_audio_ms": 990.91,
+        "server_first_audio_ms": 1455.98,
+        "server_complete_ms": 4480.59,
+        "tool_overhead_ms": 0
+      },
+      "tools": [],
+      "audio_sha256": "ad5f7acb8bf40faa1d88fd48e1f6c7b49e25abe2b6a37ea3c6492809f71494e1",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 2,
+      "audio_packets": 145
+    },
+    {
+      "type": "result",
+      "trace_id": "711819de-6969-468b-ad95-b3ba673eed5c",
+      "mode": "guarded",
+      "status": "completed",
+      "error": null,
+      "transcript": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
+      "response": "Got it! I\u2019ve simulated reserving two blue notebooks for you. They\u2019ll be ready for delivery on Friday. Let me know if there\u2019s anything else you need!",
+      "events": [
+        {
+          "name": "stt_request",
+          "ms": 7.36
+        },
+        {
+          "name": "transcript_ready",
+          "ms": 286.48
+        },
+        {
+          "name": "tool_result",
+          "ms": 826.22,
+          "status": "simulated",
+          "action": "reserve",
+          "amount": 2,
+          "external_effect": false,
+          "policy_enforced": true,
+          "overhead_ms": 0.007
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 826.43
+        },
+        {
+          "name": "llm_first_token",
+          "ms": 1298.2
+        },
+        {
+          "name": "tts_request",
+          "ms": 1301.94
+        },
+        {
+          "name": "llm_response_end",
+          "ms": 1335.9
+        },
+        {
+          "name": "first_audio_generated",
+          "ms": 2146.71
+        },
+        {
+          "name": "tts_request",
+          "ms": 2263.1
+        },
+        {
+          "name": "tts_request",
+          "ms": 3855.55
+        },
+        {
+          "name": "tts_request",
+          "ms": 5203.6
+        },
+        {
+          "name": "response_complete",
+          "ms": 6453.47
+        }
+      ],
+      "metrics": {
+        "stt_ms": 279.12,
+        "llm_first_token_ms": 1011.72,
+        "tts_first_audio_ms": 844.77,
+        "server_first_audio_ms": 2146.71,
+        "server_complete_ms": 6453.47,
+        "tool_overhead_ms": 0.007
+      },
+      "tools": [
+        {
+          "status": "simulated",
+          "action": "reserve",
+          "amount": 2,
+          "external_effect": false,
+          "policy_enforced": true,
+          "overhead_ms": 0.007
+        }
+      ],
+      "audio_sha256": "09c70feb61fe41904906d223bb2b6a6de896ff188ce4ddc8d56495ac7e1deaf3",
+      "evaluation": {
+        "status": "unscored",
+        "checks": [],
+        "scope": "Deterministic supplied criteria; semantic quality requires review."
+      },
+      "configuration": {
+        "buffer_text": false,
+        "buffer_audio": false,
+        "policy_enforced": true
+      },
+      "runtime": {
+        "commit": "local-unversioned",
+        "python": "3.12.14",
+        "dependencies": {
+          "pipecat-ai": "1.14.0",
+          "groq": "1.7.0",
+          "edge-tts": "7.3.1"
+        },
+        "region": "unknown"
+      },
+      "phrase_match": null,
+      "providers": {
+        "stt": "whisper-large-v3-turbo",
+        "llm": "openai/gpt-oss-20b",
+        "tts": "Edge-TTS",
+        "voice": "en-US-ChristopherNeural",
+        "sample_rate": 16000,
+        "llm_settings": {
+          "temperature": 0,
+          "max_completion_tokens": 1024
+        }
+      },
+      "turn_id": 4,
+      "audio_packets": 136
+    }
+  ],
+  "cancellation_ack_ms": 3
+}

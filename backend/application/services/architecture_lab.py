@@ -140,7 +140,7 @@ async def sandbox_action(spec, mode, arguments, observation):
     return result
 
 
-async def run_architecture(spec, mode, audio, emit):
+async def run_architecture(spec, mode, audio, emit, history=None):
     VoiceCalls.validate_audio(audio)
     key = os.getenv("GROQ_API_KEY", "")
     if not key:
@@ -148,25 +148,32 @@ async def run_architecture(spec, mode, audio, emit):
     o = Observation(emit)
     trace = str(uuid4())
     instruction = ("You are VoiceOps, a general-purpose voice assistant. Reply with plain speech. "
-                   "Follow the requested task. For sandbox actions call sandbox_action before reporting an outcome. "
-                   "Never claim a real external action occurred. Do not speak before a tool returns. ")
+                   "Follow the requested task. Use only tools explicitly provided in this request. "
+                   "If no tools are provided, respond in text and do not attempt any tool calls. "
+                   "Never claim a real external action occurred. ")
     tasks = {"conversation": "Answer the user's question.",
              "knowledge": "Answer only from the reference context; say when it lacks the answer.",
              "extraction": "Extract the requested fields concisely; do not invent missing values.",
              "action": "Use sandbox_action to simulate the requested action and report its result."}
     # Same policy description is visible in all modes; only guarded executes deterministic checks.
     instruction += f"{tasks[spec.task]} {spec.instruction}\nReference context:\n{spec.context}"
-    instruction += f"\nSandbox policy: allowed actions {spec.allowed_actions}; amount limit {spec.action_limit}."
     if spec.task == "action":
-        instruction += " Always submit the requested action and amount to the tool, including requests exceeding policy; let the tool decide."
+        instruction += f"\nSandbox policy: allowed actions {spec.allowed_actions}; amount limit {spec.action_limit}."
+        instruction += " Always submit the requested action and amount to sandbox_action, including requests exceeding policy; let the tool decide. Do not speak before the tool returns."
+    if spec.task == "conversation":
+        instruction += (f"\nAn optional sandbox_action tool is available for requested action simulations. "
+                        f"Allowed actions: {spec.allowed_actions}; amount limit {spec.action_limit}. "
+                        "Ordinary questions need no tool. For action requests use only sandbox_action; "
+                        "report its outcome as a simulation and never claim a purchase or booking occurred. "
+                        "Wait for the tool result before describing an action outcome.")
     if spec.task == "extraction":
         instruction += " Return only a valid JSON object containing the fields requested in the reference material."
-    context = LLMContext(messages=[{"role": "system", "content": instruction}])
+    context = LLMContext(messages=[{"role": "system", "content": instruction}, *(history or [])[-12:]])
     stt = RecordedGroqSTTService(api_key=key, settings=RecordedGroqSTTService.Settings(
         model=os.getenv("GROQ_WHISPER_MODEL", "whisper-large-v3-turbo")))
     llm = GroqLLMService(api_key=key, settings=GroqLLMService.Settings(
         model=os.getenv("GROQ_LLM_MODEL", "openai/gpt-oss-20b"), temperature=0, max_completion_tokens=1024))
-    if spec.task == "action":
+    if spec.task in ("action", "conversation"):
         context.set_tools(ToolsSchema(standard_tools=[FunctionSchema(name="sandbox_action",
             description="Simulate an action; never changes any external system.",
             properties={"action": {"type": "string"}, "amount": {"type": "number"}},

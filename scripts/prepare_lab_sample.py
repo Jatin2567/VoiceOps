@@ -12,8 +12,15 @@ async def main():
     samples = {"sample": "Explain how a rainbow forms in three short sentences.",
                "knowledge": "How long do I have to return an unused item, and do I need a receipt?",
                "extraction": "My name is Alex Test. I need two blue notebooks delivered on Friday.",
-               "action": "Simulate a refund of one hundred and fifty units."}
+               "action": "Simulate a refund of one hundred and fifty units.",
+               "sequence": "Explain how to make a cup of tea, in order.",
+               "unknown": "What time does the shop open on Sunday?",
+               "extraction2": "My name is Sam Lee. Please send three black pens on Monday.",
+               "allowed": "Simulate a refund of fifty units.",
+               "followup": "Can you explain that in simpler words?"}
     for name, text in samples.items():
+        if (target / (name + ".wav")).exists():
+            continue
         await edge_tts.Communicate(text, "en-US-JennyNeural").save(str(intermediate))
         subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-i", str(intermediate),
                         "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", str(target / (name + ".wav"))], check=True)

@@ -46,6 +46,114 @@ async def health():
     return {"status": "healthy", "service": "VoiceOps architecture lab"}
 
 
+@app.get("/api/readiness")
+async def readiness(request: Request):
+    configured = bool(os.getenv("GROQ_API_KEY", ""))
+    return {"server": "awake", "configured": configured, "provider_verified": False,
+            "capacity_available": active < 2, "active_sessions": active,
+            "message": "Server ready · providers checked when a trial runs" if configured else "Groq key is missing on the server",
+            "quota": usage_budget.remaining(request.client.host if request.client else "unknown")}
+
+
+@app.websocket("/conversation/ws")
+async def conversation(ws: WebSocket):
+    """One reader handles speech and interruption while provider work runs independently."""
+    global active
+    origin = ws.headers.get("origin", "")
+    if origin and urlsplit(origin).netloc != ws.headers.get("host"):
+        await ws.close(code=1008)
+        return
+    await ws.accept()
+    if active >= 2:
+        await ws.send_json({"type": "error", "message": "Both demo slots are busy. Try again shortly."})
+        await ws.close()
+        return
+    active += 1
+    work = None
+    history, turns, last_id, last_history_id = [], 0, None, None
+    try:
+        config = await asyncio.wait_for(ws.receive_json(), 20)
+        spec = ExperimentSpec.model_validate({**config.get("spec", {}), "modes": ["guarded"], "repeats": 1, "warmup": False})
+        await ws.send_json({"type": "ready", "max_turns": 32})
+
+        async def reply(audio, turn_id):
+            nonlocal last_history_id
+            queue = asyncio.Queue(maxsize=2400)
+            async def send():
+                while True:
+                    packet = await queue.get()
+                    try:
+                        await ws.send_json({**packet, "turn_id": turn_id})
+                    finally:
+                        queue.task_done()
+            sender = asyncio.create_task(send())
+            try:
+                result = await run_architecture(spec, "guarded", audio, queue.put_nowait, history=list(history))
+                await asyncio.wait_for(queue.join(), 15)
+                await ws.send_json({"type": "result", **result, "turn_id": turn_id})
+                if result["status"] == "completed":
+                    history.extend([{"role": "user", "content": result["transcript"][:4000]},
+                                    {"role": "assistant", "content": result["response"][:6000]}])
+                    del history[:-12]
+                    last_history_id = turn_id
+            finally:
+                sender.cancel()
+                with suppress(asyncio.CancelledError):
+                    await sender
+
+        while True:
+            message = await asyncio.wait_for(ws.receive_json(), 120)
+            if message.get("type") == "interrupt":
+                if work and not work.done():
+                    work.cancel()
+                    with suppress(asyncio.CancelledError):
+                        await work
+                # An interrupted reply is excluded from the next turn's context.
+                if message.get("turn_id") == last_history_id and history:
+                    del history[-2:]
+                    last_history_id = None
+                await ws.send_json({"type": "interrupted", "turn_id": last_id})
+                last_id = None
+                continue
+            if message.get("type") != "audio":
+                raise ValueError("Expected audio or interruption")
+            if turns >= 32:
+                break
+            if work and not work.done():
+                raise ValueError("Interrupt the current turn before sending another")
+            if work and not work.cancelled():
+                work.result()
+            encoded = message.get("audio", "")
+            if not isinstance(encoded, str) or len(encoded) > 1280060:
+                raise ValueError("Recording too long")
+            audio = base64.b64decode(encoded, validate=True)
+            VoiceCalls.validate_audio(audio)
+            quota = usage_budget.reserve(ws.client.host if ws.client else "unknown", 1)
+            turns += 1
+            last_id = turns
+            await ws.send_json({"type": "turn_start", "turn_id": turns, "quota": quota})
+            work = asyncio.create_task(reply(audio, turns))
+        if work:
+            await work
+        await ws.send_json({"type": "complete", "message": "Session limit reached. Start another conversation."})
+    except WebSocketDisconnect:
+        pass
+    except BudgetExceeded as exc:
+        with suppress(Exception):
+            await ws.send_json({"type": "error", "code": "usage_limit", "message": str(exc)})
+    except (ValueError, ValidationError, CallError, asyncio.TimeoutError, RuntimeError):
+        with suppress(Exception):
+            await ws.send_json({"type": "error", "message": "Conversation paused. Check your recording, available allowance, or reconnect."})
+    finally:
+        if work:
+            work.cancel()
+            with suppress(asyncio.CancelledError, Exception):
+                await work
+        active -= 1
+        with suppress(Exception):
+            await ws.close()
+
+
 @app.websocket("/lab/ws")
 async def experiment(ws: WebSocket):
     global active

@@ -21,9 +21,19 @@ blocking of an over-limit simulated refund. These reports do not measure browser
 Use the browser for playback acceptance tests. A few trials do not establish architectural
 speedup percentages. See ARCHITECTURE_LAB.md for the complete measurement contract.
 
-## Browser voice calls
+## General conversation workspace
 
-Open **Call studio → Live call**, choose **Start call**, and allow microphone access once. Speak naturally;
+Open **Conversation** on the public root. Configure instructions and optional reference material, then
+start the microphone once. Captured speech interrupts a reply; a short pause submits a complete turn.
+Use headphones. Stop reply and End conversation are always available during a session.
+Try sample conversation sends two prerecorded requests through live providers and demonstrates context.
+The readiness indicator reports server/configuration state, with providers verified during use.
+Evaluation suite runs eight varied synthetic requests and exports partial or completed reports.
+See ARCHITECTURE_LAB.md for the protocol, limits and measurement boundaries.
+
+## Legacy booking voice calls
+
+Open **/studio/ → Live call**, choose **Start call**, and allow microphone access once. Speak naturally;
 a roughly 1.1-second pause submits the utterance automatically. The reply plays and listening
 resumes without pressing Record or Send. Mute and End remain available. Listening pauses
 while the assistant speaks to avoid echo; interruption/barge-in is not supported.
