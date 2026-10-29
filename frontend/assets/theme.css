@@ -39,3 +39,14 @@ a{color:var(--accent)} em{font-style:normal;color:var(--accent)}
 .st-key-voice_console{margin-top:0!important}
 .voice-art.is-active{height:120px}
 .empty-state{border:1px dashed #40372d;border-radius:16px;padding:32px;text-align:center;margin:20px 0}.empty-state strong{display:block;font-size:21px;color:#e2d9cc;margin-bottom:9px}.empty-state p{font-size:13px;color:#a59b8e}
+/* Warm daylight palette: the only application theme. */
+:root{color-scheme:light;--ink:#332c25;--muted:#796d60;--accent:#b94f29;--line:#e2d7c9;--surface:#fffdf9}
+.stApp{background:#faf7f2;color:var(--ink)}p{color:#62564b}[data-testid="stHeader"]{background:#faf7f2ee}
+.masthead-note,.system-state,.eyebrow,.prompt-label,.panel-label{color:#796b5c}.system-state i{background:#537e50;box-shadow:none}
+.st-key-workspace_nav label p{color:#786b5d}.st-key-workspace_nav label:has(input:checked){background:#eee3d5;border-color:#dbc7ae}.st-key-workspace_nav label:has(input:checked) p{color:#392e24}.st-key-workspace_nav label:hover{background:#f0e6d8}
+.intro-copy,.studio-tags{color:#6d5f50}.sample-prompt{color:#57483a;border-color:#c78457}.st-key-voice_console{background:radial-gradient(ellipse at 50% 25%,#ffe3b650,transparent 65%),#fffaf3;border-color:#dfcbb3!important;box-shadow:0 18px 55px #9a784815}.console-top{color:#71604e}.console-status{color:#5b704b}.console-title{color:#493929}
+.process-strip b{color:#ae572f}.process-strip span{color:#514235}.process-strip small{color:#7e7060}.conversation-empty{border-color:#ddcebb;background:#fffdf9}.conversation-empty h3{color:#574536}.conversation-empty p{color:#7d6e5e}
+[data-testid="stChatMessage"]{background:#fffdf8;border-color:#e4d6c4}[data-testid="stChatMessage"] p{color:#534638}[data-testid="stVerticalBlockBorderWrapper"]>div{border-color:#dfd1bf!important}.stExpander{background:#fffaf3;border-color:#dfd1bf!important}.stExpander p{color:#62513f}
+.stButton>button,.stLinkButton>a{background:#fffaf3;color:#53402f;border-color:#d6c1a6}.stButton>button[kind="primary"]{background:#bd532d;color:#fff;border-color:#bd532d;box-shadow:none}.stButton>button:hover{background:#f4e5d1;border-color:#ac572f}.stButton>button[kind="primary"]:hover{background:#a94726;color:white}
+[data-testid="stMetric"]{background:#fffaf3;border-color:#dfceb8}[data-testid="stMetricValue"]{color:#824827}[data-testid="stTabs"] [role="tab"]{color:#78664f}[data-testid="stTabs"] [aria-selected="true"]{color:#a94f2b}
+.site-footer{color:#7e6c58}.footer-brand{color:#66513d}.empty-state{background:#fffdf9;border-color:#deceb8}.empty-state strong{color:#604a35}.empty-state p{color:#7d6c59}

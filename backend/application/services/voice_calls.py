@@ -157,7 +157,8 @@ class VoiceCalls:
                     file.write(audio)
                     path = Path(file.name)
                 request = BenchmarkRequest(trace_id=trace, mode=PipelineMode.HYBRID,
-                                           audio_file_path=str(path), session_id=key)
+                                           audio_file_path=str(path), session_id=key,
+                                           metadata={"recorded_utterance": True})
                 await runner._run_pipeline_background(request, trace)
                 result = store.result
                 response = result.model_dump(mode="json")

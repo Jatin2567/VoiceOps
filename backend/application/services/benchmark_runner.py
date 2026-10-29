@@ -2,6 +2,8 @@
 import asyncio
 import time
 import wave
+from pathlib import Path
+from backend.infrastructure.providers.recorded_stt import RecordedUtteranceFrame
 from contextlib import suppress
 from datetime import datetime, timezone
 from typing import Dict, Optional
@@ -96,6 +98,10 @@ class BenchmarkRunnerService:
 
             async def feed_audio():
                 await started_event.wait()
+                if request.metadata.get("recorded_utterance"):
+                    await task.queue_frame(UserStoppedSpeakingFrame())
+                    await task.queue_frame(RecordedUtteranceFrame(audio=Path(request.audio_file_path).read_bytes()))
+                    return
                 await task.queue_frame(VADUserStartedSpeakingFrame())
                 await task.queue_frame(UserStartedSpeakingFrame())
                 for offset in range(0, len(audio), self.PCM_CHUNK_SIZE):

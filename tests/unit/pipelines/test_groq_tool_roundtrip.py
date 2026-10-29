@@ -17,6 +17,7 @@ from backend.domain.models.benchmark import BenchmarkRequest, PipelineMode
 from backend.infrastructure.persistence.mock_booking_repo import MockBookingRepository
 from backend.infrastructure.persistence.supabase_client import SupabaseTelemetryRepository
 from backend.infrastructure.providers.edge_tts_client import EdgeTTSService
+from backend.infrastructure.providers.recorded_stt import RecordedGroqSTTService
 from backend.infrastructure.queue.upstash_client import UpstashQueuePublisher
 from backend.pipelines.factory import PipelineFactory
 
@@ -34,7 +35,8 @@ class RecordedSTT(FrameProcessor):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("booking_id, expected", [("book-001", "success"), ("missing", "error")])
-async def test_groq_guardrail_result_resumes_spoken_reply(tmp_path, monkeypatch, booking_id, expected):
+@pytest.mark.parametrize("batch", [False, True])
+async def test_groq_guardrail_result_resumes_spoken_reply(tmp_path, monkeypatch, booking_id, expected, batch):
     monkeypatch.setenv("GROQ_API_KEY", "test-key")
     contexts = []
 
@@ -64,12 +66,16 @@ async def test_groq_guardrail_result_resumes_spoken_reply(tmp_path, monkeypatch,
     repo = SupabaseTelemetryRepository()
     factory = PipelineFactory(UpstashQueuePublisher(), GuardrailPolicyService(bookings))
     runner = BenchmarkRunnerService(factory, repo, timeout_secs=5)
-    request = BenchmarkRequest(mode=PipelineMode.HYBRID, audio_file_path=str(path))
+    request = BenchmarkRequest(mode=PipelineMode.HYBRID, audio_file_path=str(path), metadata={"recorded_utterance": batch})
+    async def recorded_speech(stt, audio):
+        assert audio[:4] == b"RIFF"
+        yield TranscriptionFrame("Cancel my appointment.", "user", "")
     # Preserve the STT Settings type used while constructing the topology.
     from pipecat.services.groq.stt import GroqSTTService
     RecordedSTT.Settings = GroqSTTService.Settings
     try:
-        with patch("backend.pipelines.modes.cascade_topology.GroqSTTService", RecordedSTT), \
+        with patch("backend.pipelines.modes.cascade_topology.GroqSTTService", RecordedGroqSTTService if batch else RecordedSTT), \
+             patch.object(RecordedGroqSTTService, "run_stt", recorded_speech), \
              patch.object(GroqLLMService, "_process_context", completion), \
              patch.object(EdgeTTSService, "run_tts", speech):
             await runner._run_pipeline_background(request, request.trace_id)

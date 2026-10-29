@@ -54,20 +54,20 @@ def render_waterfall_chart(result_data: Optional[Dict[str, Any]]) -> None:
     )
 
     fig.update_layout(
-        template="plotly_dark",
+        template="plotly_white",
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(family="sans-serif", size=13, color="#c5c0b6"),
+        font=dict(family="sans-serif", size=13, color="#62564b"),
         height=320,
         margin=dict(l=20, r=20, t=20, b=20),
         xaxis=dict(
             title="Latency in Milliseconds (ms)",
-            gridcolor="#34312c",
-            zerolinecolor="#4c463e",
+            gridcolor="#e2d7c9",
+            zerolinecolor="#d2bfa8",
         ),
         yaxis=dict(
             autorange="reversed",
-            gridcolor="#34312c",
+            gridcolor="#e2d7c9",
         ),
     )
 

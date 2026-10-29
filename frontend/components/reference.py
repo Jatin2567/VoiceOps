@@ -10,8 +10,8 @@ def render_reference():
     with tabs[0]:
         st.subheader("One voice stack. Two ways to explore.")
         st.write("Live call: browser microphone → 16 kHz WAV → Groq Whisper → Groq reasoning → deterministic booking tools → Edge-TTS → browser playback. Each turn runs through Pipecat.")
-        st.write("Benchmark lab compares Cascade and Hybrid. Microphone calls always use Hybrid. A call retains conversation context and tool results between recordings.")
-        st.info("This is a turn-based demo clinic, not full-duplex telephony. Bookings are real mutations in an isolated in-memory demo store, not a production scheduling system.")
+        st.write("Benchmark lab compares Cascade and Hybrid. Microphone calls always use Hybrid. A call retains conversation context and tool results between automatically detected turns.")
+        st.info("Start once and speak; a roughly 1.1-second pause submits your turn. Replies play automatically, then listening resumes. Listening is paused during replies, so this is not full-duplex telephony. Bookings are real mutations in an isolated in-memory demo store, not a production scheduling system.")
         st.caption("Groq receives recorded speech and context. Edge-TTS receives reply text. Calls are not added to the public benchmark history.")
     with tabs[1]:
         st.subheader("Find the failure, not a guess.")
@@ -21,13 +21,13 @@ def render_reference():
             {"Symptom": "Call expired", "Check": "Start a new call. Free instances restart and sleep; sessions are temporary."},
             {"Symptom": "Provider error / timeout", "Check": "Copy the trace ID; inspect Render logs; verify GROQ_API_KEY and GROQ_LLM_MODEL."},
             {"Symptom": "Booking conflict", "Check": "Review Booking activity. Use another UTC slot or cancel the previous appointment."},
-            {"Symptom": "Connection interrupted", "Check": "Resend the same recording. Its turn ID prevents duplicate execution within this session."},
+            {"Symptom": "Connection interrupted", "Check": "Use Retry this turn. The original turn ID prevents duplicate execution within this session."},
         ])
-        st.code("pytest -q\npython scripts/evaluate_voice.py --base-url http://127.0.0.1:8000", language="bash")
+        st.code("pytest -q\nnode --test tests/audio-turns.test.mjs\npython scripts/evaluate_voice.py --base-url http://127.0.0.1:8000", language="bash")
         st.caption("Keep keys, full transcripts, and phone numbers out of public bug reports. Report trace ID, stage, mode, timestamp, and sanitized error details.")
     with tabs[2]:
         st.subheader("Explicit limits. Predictable recovery.")
-        st.write("30-second input limit; 60-second pipeline deadline; two concurrent voice turns; one active turn per call; 24 call rooms; 12 turns per call; 30-minute idle expiry. A failed process stops the combined Render service so health checks can detect it.")
+        st.write("25-second automatic speech limit (30-second API limit); 60-second pipeline deadline; two concurrent voice turns; one active turn per call; 24 call rooms; 12 turns per call; 30-minute idle expiry. A failed process stops the combined Render service so health checks can detect it.")
         st.write("Tool calls are serialized per call. Repeated turn IDs retrieve cached outcomes. If synthesis fails after a booking action, inspect Booking activity before repeating the request. Sessions and idempotency records do not survive restarts.")
         st.warning("Free hosting sleeps when idle. Bookings are ephemeral and unauthenticated demo data. Do not use real patient information or treat this as production scheduling.")
         st.caption("TTFA is measured from the backend speech-end marker to first generated audio. Browser upload and playback delay are additional; this is not end-user mouth-to-ear latency.")

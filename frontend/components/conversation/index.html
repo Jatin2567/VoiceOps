@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*{box-sizing:border-box}body{margin:0;color:#382e25;font:14px 'Segoe UI',Arial,sans-serif;background:transparent}button{font:inherit;cursor:pointer;min-height:45px;border-radius:12px;border:1px solid #d8c7b5;background:#fffaf4;color:#44382c;padding:10px 18px}button:focus-visible{outline:3px solid #a94d24;outline-offset:3px}button:disabled{opacity:.45;cursor:default}.primary{background:#c6532c;border-color:#c6532c;color:white;font-weight:600;width:100%}.actions{display:flex;gap:9px;margin-top:10px}.actions button{flex:1}.orb{height:150px;display:grid;place-items:center}.core{width:108px;height:108px;border-radius:50%;background:radial-gradient(circle at 32% 24%,#ffe8c5,#f2b980 25%,#d27a4c 55%,#a65939);box-shadow:0 14px 35px #b8753930,inset -8px -10px 18px #844e3130;display:flex;align-items:center;justify-content:center;gap:5px}.core i{height:22px;width:4px;background:#fff6e8;border-radius:4px}.core i:nth-child(2n){height:34px}.core i:nth-child(3){height:46px}body[data-state="listening"] .core,body[data-state="speaking"] .core{animation:breathe 2.2s ease-in-out infinite}@keyframes breathe{50%{transform:scale(1.04)}}h3{font-size:20px;font-weight:550;letter-spacing:-.6px;text-align:center;margin:3px 0 9px}#detail{text-align:center;color:#6e6154;font-size:12px;line-height:1.6;min-height:38px;margin:0 0 15px}.note{font-size:11px;color:#7d6c5b;line-height:1.6;text-align:center;margin-top:13px}.demo{border:0;background:transparent;width:100%;font-size:12px;text-decoration:underline;text-underline-offset:3px}#meter{height:3px;background:#eadbc9;border-radius:5px;overflow:hidden;margin:12px 0}#level{height:100%;background:#c66b3c;width:0;transition:width .1s}audio{width:100%;height:38px;margin:10px 0} [hidden]{display:none!important}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body data-state="idle">
+<div class="orb" aria-hidden="true"><div class="core"><i></i><i></i><i></i><i></i><i></i></div></div>
+<h3 id="status" role="status" aria-live="polite">Let’s talk.</h3><p id="detail">Start once. Speak naturally. We’ll take turns from there.</p>
+<div id="meter" aria-hidden="true"><div id="level"></div></div>
+<button class="primary" id="start">Start call</button>
+<div class="actions" id="controls" hidden><button id="pause">Mute microphone</button><button id="end">End call</button></div>
+<button id="retry" hidden>Retry this turn</button><button id="play" hidden>Play reply & continue</button>
+<audio id="reply" controls hidden></audio>
+<button class="demo" id="demo">Try a sample conversation</button>
+<p class="note">Microphone audio goes to Groq; reply text goes to Edge-TTS.<br>Use fictional details. Listening pauses while the assistant speaks.</p>
+<script type="module" src="app.mjs"></script></body></html>

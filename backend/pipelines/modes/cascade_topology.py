@@ -8,7 +8,7 @@ from pipecat.processors.frame_processor import FrameProcessor
 from pipecat.frames.frames import TranscriptionFrame, LLMContextFrame
 from pipecat.processors.aggregators.llm_context import LLMContext
 from pipecat.services.groq.llm import GroqLLMService
-from pipecat.services.groq.stt import GroqSTTService
+from backend.infrastructure.providers.recorded_stt import RecordedGroqSTTService as GroqSTTService
 
 from backend.domain.models.benchmark import PipelineMode
 from backend.domain.ports.queue_publisher import IQueuePublisher

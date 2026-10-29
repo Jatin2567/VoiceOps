@@ -1,14 +1,11 @@
 """Voice studio: recording, contextual replies, and transparent booking actions."""
 import base64
-import hashlib
+from frontend.components.handsfree import render_handsfree
 from datetime import datetime, timedelta, timezone
-from uuid import uuid4
-import httpx
 import streamlit as st
 
 
 def render_live_call(backend_url, online):
-    sid = st.session_state.get("call_id")
     left, right = st.columns([1.2, 1], gap="large")
     with left:
         st.markdown('''<section class="studio-intro">
@@ -23,78 +20,10 @@ def render_live_call(backend_url, online):
         st.caption('Then try “Cancel the appointment you just booked.” Use fictional details and UTC times.')
     with right:
         with st.container(border=True, key="voice_console"):
-            label = "SESSION OPEN" if sid else "READY WHEN YOU ARE"
-            st.markdown(f'<div class="console-top"><span>VOICEOPS ASSISTANT</span><span class="console-status">{label}</span></div>', unsafe_allow_html=True)
-            st.markdown(f'''<div class="voice-art {'is-active' if sid else ''}" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="voice-core"><div class="voice-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div>''', unsafe_allow_html=True)
-            st.markdown('<div class="console-title">Your next conversation starts here.</div>', unsafe_allow_html=True)
-            if not sid:
-                st.caption("One turn at a time. Record, send, and hear the reply.")
-                st.caption("Audio → Groq · Reply text → Edge-TTS. Use fictional details.")
-                if st.button("Start a conversation ↗", type="primary", disabled=not online, width="stretch"):
-                    try:
-                        response = httpx.post(backend_url + "/v1/calls", timeout=10)
-                        response.raise_for_status()
-                        st.session_state.update(call_id=response.json()["session_id"], call_turns=[], call_bookings=[], call_pending=None, call_recorder=0)
-                        st.rerun()
-                    except httpx.HTTPError:
-                        st.error("Could not open a call. The server may be waking up; try again shortly.")
-            else:
-                st.caption("● Session ready · Hybrid checks active")
-                source = st.radio("Voice input", ["Microphone", "Test recording"], horizontal=True)
-                if source == "Microphone":
-                    audio = st.audio_input("Record your request", sample_rate=16000,
-                                           key=f"call_mic_{st.session_state.call_recorder}")
-                    st.caption("Record → stop → send. Keep each turn under 30 seconds. If microphone access is denied, enable it in your browser’s site settings.")
-                else:
-                    audio = st.file_uploader("Upload a 16 kHz mono WAV", type="wav", key=f"call_upload_{st.session_state.call_recorder}")
-                if st.button("Send voice turn", type="primary", disabled=audio is None, width="stretch"):
-                    raw = audio.getvalue()
-                    if len(raw) > 960044:
-                        st.error("This recording is too long. Record less than 30 seconds.")
-                    else:
-                        digest = hashlib.sha256(raw).hexdigest()
-                        pending = st.session_state.get("call_pending")
-                        if not pending or pending[0] != digest:
-                            pending = (digest, str(uuid4()))
-                            st.session_state.call_pending = pending
-                        with st.status("Listening, checking policies, and preparing your reply…", expanded=True) as progress:
-                            st.write("Your recording is being processed. Please wait before sending another turn.")
-                            try:
-                                response = httpx.post(f"{backend_url}/v1/calls/{sid}/turns", json={
-                                    "turn_id": pending[1], "audio_base64": base64.b64encode(raw).decode(),
-                                }, timeout=80)
-                                if response.status_code != 200:
-                                    st.error(response.json().get("detail", "The call could not process this turn."))
-                                    progress.update(label="Turn not completed", state="error")
-                                else:
-                                    result = response.json()
-                                    if not any(t["turn_id"] == result["turn_id"] for t in st.session_state.call_turns):
-                                        # Keep previous text while releasing old audio from browser session memory.
-                                        for prior in st.session_state.call_turns:
-                                            prior["audio_base64"] = None
-                                        st.session_state.call_turns.append(result)
-                                    st.session_state.call_bookings = result["bookings"]
-                                    st.session_state.call_pending = None
-                                    st.session_state.call_recorder += 1
-                                    st.session_state.call_autoplay = result["turn_id"]
-                                    st.rerun()
-                            except httpx.HTTPError:
-                                st.error("Connection interrupted. Send the same recording again to retrieve its result without repeating the booking action.")
-                                progress.update(label="Connection interrupted", state="error")
-                if st.button("End conversation", width="stretch"):
-                    try:
-                        response = httpx.delete(f"{backend_url}/v1/calls/{sid}", timeout=10)
-                        if response.status_code not in (200, 404):
-                            st.error("A reply is still in progress. Wait for it to finish, then end the call.")
-                        else:
-                            for key in list(st.session_state):
-                                if key.startswith("call_"):
-                                    del st.session_state[key]
-                            st.rerun()
-                    except httpx.HTTPError:
-                        st.error("Could not reach the server to end the call. Please try again.")
+            st.markdown('<div class="console-top"><span>VOICEOPS ASSISTANT</span><span class="console-status">HANDS-FREE CONVERSATION</span></div>', unsafe_allow_html=True)
+            render_handsfree(backend_url, online)
 
-    st.markdown('<div class="process-strip"><div><b>01</b><span>Speak naturally<small>Up to 30 seconds per turn</small></span></div><div><b>02</b><span>Policies come first<small>Every booking action is checked</small></span></div><div><b>03</b><span>Hear the outcome<small>Spoken replies, visible actions</small></span></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="process-strip"><div><b>01</b><span>Speak naturally<small>Start once · pause to finish a turn</small></span></div><div><b>02</b><span>Policies come first<small>Every booking action is checked</small></span></div><div><b>03</b><span>Hear the outcome<small>Spoken replies, visible actions</small></span></div></div>', unsafe_allow_html=True)
     st.markdown('<div class="section-heading"><span class="eyebrow">YOUR SESSION</span><h2>Every word. Every action.</h2></div>', unsafe_allow_html=True)
     left, right = st.columns([1.5, 1], gap="large")
     with left:
@@ -108,9 +37,7 @@ def render_live_call(backend_url, online):
                 if turn["status"] == "completed":
                     st.write(turn["response_text"])
                     if turn.get("audio_base64"):
-                        auto = st.session_state.get("call_autoplay") == turn["turn_id"]
-                        st.audio(base64.b64decode(turn["audio_base64"]), format="audio/wav", autoplay=auto)
-                        st.session_state.call_autoplay = None
+                        st.audio(base64.b64decode(turn["audio_base64"]), format="audio/wav", autoplay=False)
                     st.caption(f"{turn['interception_count']} tool checks · first generated audio {turn['ttfa_ms'] / 1000:.1f}s · trace {turn['trace_id'][:8]}")
                 else:
                     st.error(turn["error_message"])
@@ -130,5 +57,5 @@ def render_live_call(backend_url, online):
                 st.caption(f"{booking['customer_name']} · ID {booking['id']}")
 
         with st.expander("Session details & privacy"):
-            st.write("Push-to-talk demo, not a telephone call. Bookings exist only in your session and disappear on restart. Calls expire after 30 idle minutes, with up to 12 turns. Microphone access requires HTTPS and browser permission.")
+            st.write("Hands-free demo with automatic pause detection. Listening pauses during replies; this is not full-duplex telephony. Bookings exist only in your session and disappear on restart. Calls expire after 30 idle minutes, with up to 12 turns. Microphone access requires HTTPS and browser permission.")
             st.caption("If autoplay is blocked, use the audio player. The Reference page explains recovery, policies, and evaluation.")

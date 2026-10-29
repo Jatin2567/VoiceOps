@@ -2,10 +2,17 @@
 
 ## Browser voice calls
 
-Open **Live call**, choose **Start voice call**, allow microphone access, record a short
-request, stop, and send the turn. The reply has an audio player and a transcript.
-This is push-to-talk on HTTPS, not telephone connectivity or full-duplex streaming.
+Open **Live call**, choose **Start call**, and allow microphone access once. Speak naturally;
+a roughly 1.1-second pause submits the utterance automatically. The reply plays and listening
+resumes without pressing Record or Send. Mute and End remain available. Listening pauses
+while the assistant speaks to avoid echo; interruption/barge-in is not supported.
 Microphone audio is processed by Groq; reply text is synthesized by Edge-TTS.
+The browser mutes when hidden and after five minutes without a turn. End and navigation
+release microphone tracks. A blocked browser audio context exposes a Play & continue button.
+
+**Try a sample conversation** uses two prerecorded fictional voices through the same pause
+detector, server bridge, live providers, and playback loop. It does not test physical microphones.
+The component has no API keys and uses Streamlit's existing connection; the backend stays private.
 
 The call uses the existing Pipecat engine. Groq tool calls enter the deterministic
 guardrail callback; the tool result returns through the assistant context aggregator
@@ -15,7 +22,7 @@ These are demo mutations, not appointments in an external clinic system.
 
 ## Reliability contract
 
-- 16 kHz, mono, 16-bit PCM WAV; 0.1–30 seconds per recording.
+- 16 kHz, mono, 16-bit PCM WAV; 0.1–30 seconds per recording; automatic microphone segments cap at 25 seconds.
 - 60-second pipeline deadline; one turn per call; two concurrent turns per process.
 - Maximum 24 sessions, 12 turns per session, 30-minute idle expiry.
 - Turn IDs are idempotent within the session. Reusing an ID with different audio is rejected.
@@ -52,9 +59,11 @@ counts, completed audio, cancellation state, and duplicate-turn behavior. Result
 trace IDs and timings, not keys or full transcripts. It deletes its isolated call afterward.
 
 The public Render API is deliberately loopback-only. To test the deployed application,
-use **Live call → Test recording**, upload a 16 kHz WAV, and inspect booking activity.
-For a human microphone acceptance test, speak the same requests and confirm playback.
-Synthetic-audio tests do not establish real microphone quality or a reliability percentage.
+use **Live call → Try a sample conversation** and inspect both turns and Booking activity.
+For a human microphone acceptance test, select **Start call**, speak a request, pause, hear
+the reply, and speak the follow-up without touching the controls. Confirm mute/end, permission
+denial, and the correct input/output device. Synthetic tests do not establish microphone quality.
+Run the client turn-boundary checks with `node --test tests/audio-turns.test.mjs`.
 
 Measure TTFA separately from full turn duration. TTFA starts at the backend speech-end
 marker and ends at first generated audio; upload and browser playback add latency.

@@ -1,15 +1,15 @@
 {
-  "timestamp_utc": "2026-10-29T15:18:06.035100+00:00",
+  "timestamp_utc": "2026-10-29T16:51:24.474256+00:00",
   "input": "synthetic spoken requests; live Groq and Edge-TTS",
   "cases": [
     {
       "case": "booking",
       "passed": true,
       "status": "completed",
-      "trace_id": "8111434a-fa65-42e6-bb5e-41d9ec8ace0c",
+      "trace_id": "a4bf2659-2a05-4470-a3f0-8bf47653f6fb",
       "tool_checks": 2,
       "policy_blocks": 0,
-      "ttfa_ms": 3894.84,
+      "ttfa_ms": 3085.83,
       "booking_count": 1
     },
     {
@@ -20,50 +20,50 @@
       "case": "conflict",
       "passed": true,
       "status": "completed",
-      "trace_id": "91395da2-7a3e-4f4d-a878-e0d14824143c",
+      "trace_id": "800226f7-48f8-47e0-93d7-3e190f80ea5c",
       "tool_checks": 1,
       "policy_blocks": 0,
-      "ttfa_ms": 3898.67,
+      "ttfa_ms": 2661.07,
       "booking_count": 1
     },
     {
       "case": "cancellation",
       "passed": true,
       "status": "completed",
-      "trace_id": "785dd0cc-d54e-4804-a77c-7cba69df675c",
+      "trace_id": "7af6718b-e60a-4909-b3f8-e0f1af30213d",
       "tool_checks": 1,
       "policy_blocks": 0,
-      "ttfa_ms": 2845.37,
+      "ttfa_ms": 3177.37,
       "booking_count": 1
     },
     {
       "case": "unknown_cancellation",
       "passed": true,
       "status": "completed",
-      "trace_id": "cbab75c6-6741-4294-a76e-e1775721df27",
+      "trace_id": "60b620a4-6968-4f31-bda4-70c7ccaa33ff",
       "tool_checks": 1,
       "policy_blocks": 1,
-      "ttfa_ms": 2960.76,
+      "ttfa_ms": 3494.86,
       "booking_count": 1
     },
     {
       "case": "near_booking",
       "passed": true,
       "status": "completed",
-      "trace_id": "01083bd9-e280-4d18-bd3c-80b8c0b8efc6",
+      "trace_id": "ee51724d-42ea-40ac-90d7-9b01d7241e03",
       "tool_checks": 2,
       "policy_blocks": 0,
-      "ttfa_ms": 3195.5,
+      "ttfa_ms": 23183.71,
       "booking_count": 2
     },
     {
       "case": "late_cancellation",
       "passed": true,
       "status": "completed",
-      "trace_id": "ddc2edc6-f35b-4c2f-81b2-8c86e3ad5eb9",
+      "trace_id": "6e21579b-a424-4097-b55f-9d554c2af6db",
       "tool_checks": 1,
       "policy_blocks": 1,
-      "ttfa_ms": 4872.96,
+      "ttfa_ms": 22503.93,
       "booking_count": 2
     }
   ],
